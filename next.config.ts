@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       { source: "/dashboard/categories", destination: "/categories" },
       { source: "/dashboard/coupons", destination: "/coupons" },
       { source: "/dashboard/notification", destination: "/notification" },
+      { source: "/dashboard/users", destination: "/users" },
     ];
   },
 };

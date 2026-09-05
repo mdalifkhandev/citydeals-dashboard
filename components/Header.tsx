@@ -13,6 +13,7 @@ export default function Header() {
     if (pathname.includes("categories")) return "Categories";
     if (pathname.includes("coupons")) return "Coupons";
     if (pathname.includes("notification")) return "Notification";
+    if (pathname.includes("users")) return "Users";
     return "Dashboard";
   };
 
