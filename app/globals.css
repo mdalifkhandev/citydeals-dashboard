@@ -1,0 +1,60 @@
+@import "tailwindcss";
+:root { --background: #fff; --foreground: #0f172a; --primary: #f97316; --subtext: #475569; }
+@theme inline { --color-background: var(--background); --color-foreground: var(--foreground); --font-sans: Helvetica, Arial, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--background); color: var(--foreground); font-family: Helvetica, Arial, sans-serif; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible { outline: 3px solid #c2410c; outline-offset: 4px; }
+.sign-in-page { min-height: 100svh; }
+.sign-in-layout { display: grid; grid-template-columns: 1fr 1fr; width: 100%; min-height: 100svh; background: var(--background); }
+.hero-panel { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.hero-panel > img { object-fit: cover; }
+.form-panel { position: relative; display: flex; align-items: center; justify-content: center; padding: clamp(32px, 5.55vw, 80px); min-width: 0; }
+.sign-in-form { width: 100%; max-width: 536px; display: flex; flex-direction: column; gap: 40px; }
+.form-header { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.brand-logo { width: 263px; height: 76px; max-width: 100%; object-fit: contain; object-position: left; }
+h1 { margin: 0; font-size: 30px; font-weight: 400; line-height: 40px; }
+.form-header p { margin: 0; color: var(--subtext); font-size: 18px; line-height: 28px; }
+.form-fields { display: flex; flex-direction: column; gap: 24px; }
+.field-group { display: flex; flex-direction: column; gap: 8px; }
+.field-group label { font-size: 18px; line-height: 28px; }
+.field-group label span { color: #d63031; }
+.input-shell { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid #d4d4d4; border-radius: 8px; }
+.input-shell:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px #f973161f; }
+.input-shell > img { flex-shrink: 0; }
+.input-shell input { width: 100%; min-width: 0; border: 0; outline: none; background: transparent; font-size: 16px; line-height: 24px; }
+.input-shell input::placeholder { color: #a3a3a3; }
+.password-toggle { display: grid; place-items: center; flex-shrink: 0; background: transparent; border: 0; padding: 0; width: 24px; height: 24px; }
+.forgot-password { align-self: flex-end; padding: 0; border: 0; background: transparent; color: #404040; font-size: 16px; line-height: 24px; text-decoration: underline; text-underline-offset: 3px; }
+.forgot-password:hover { color: #c2410c; }
+.primary-button { width: 100%; border: 0; border-radius: 12px; padding: 12px; background: var(--primary); color: white; font-size: 16px; line-height: 24px; transition: background 150ms; }
+.primary-button:hover { background: #ea580c; }
+.form-notice { margin: -20px 0 0; font-size: 14px; line-height: 22px; color: var(--subtext); }
+.recovery-email { font-weight: 500; overflow-wrap: anywhere; }
+.input-shell .otp-input { text-align: center; letter-spacing: 0.5em; font-size: 24px; line-height: 32px; }
+.recovery-footer { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.recovery-footer .forgot-password { align-self: center; }
+.demo-help { margin: 0; color: var(--subtext); font-size: 13px; line-height: 20px; }
+.recovery-footer .demo-help { text-align: center; }
+@media (min-width: 701px) and (max-width: 1100px) {
+ .form-panel { padding: 40px; }
+ .sign-in-form { gap: 28px; }
+ .brand-logo { width: 187px; height: 54px; }
+ h1 { font-size: 23px; line-height: 30px; }
+ .form-header p { font-size: 14px; line-height: 22px; }
+ .field-group label { font-size: 14px; line-height: 20px; }
+ .input-shell { padding: 8px 12px; }
+ .form-fields { gap: 20px; }
+}
+@media (max-width: 700px) {
+ body { background: white; }
+ .sign-in-layout { grid-template-columns: 1fr; }
+ .hero-panel { position: relative; height: 260px; }
+ .hero-panel > img { object-position: center 55%; }
+ .form-panel { padding: 40px 24px; }
+ .sign-in-form { gap: 28px; }
+ .brand-logo { width: 220px; height: 64px; }
+ h1 { font-size: 25px; line-height: 34px; }
+ .form-header p { font-size: 16px; line-height: 25px; }
+}
