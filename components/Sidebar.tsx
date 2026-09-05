@@ -56,6 +56,7 @@ export default function Sidebar({ activeItem }: SidebarProps) {
           width={185}
           height={54}
           priority
+          style={{ width: "auto", height: "auto" }}
         />
       </div>
 
