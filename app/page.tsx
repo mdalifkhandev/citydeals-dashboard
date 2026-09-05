@@ -42,7 +42,17 @@ export default function Home() {
   return (
     <main className="sign-in-page">
       <section className="sign-in-layout" aria-labelledby="sign-in-title">
-        <div className="hero-panel"><Image src={hero} alt="Local deals shop with an orange discount coupon and shopping bag" fill priority sizes="(max-width: 700px) 100vw, 50vw" /></div>
+        <div className="hero-panel">
+          <div className="relative size-full">
+            <Image
+              src={hero}
+              alt="Local deals shop with an orange discount coupon and shopping bag"
+              fill
+              priority
+              sizes="(max-width: 700px) 100vw, 50vw"
+            />
+          </div>
+        </div>
         <div className="form-panel">
           <form className="sign-in-form" onSubmit={submit} key={step}>
             <header className="form-header">
