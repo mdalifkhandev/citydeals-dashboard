@@ -27,7 +27,7 @@ const menuSections = [
     title: "People",
     items: [
       { label: "Users", icon: "imgUser.svg", href: "/users" },
-      { label: "Staff account", icon: "imgUserSquare.svg", href: "#" },
+      { label: "Staff accounts", icon: "imgUserSquare.svg", href: "/staff" },
       { label: "Roles & Permissions", icon: "imgUserOctagon.svg", href: "#" },
     ],
   },
@@ -42,7 +42,7 @@ export default function Sidebar({ activeItem }: SidebarProps) {
 
   const isItemActive = (item: { label: string; href: string }) => {
     if (activeItem) return item.label === activeItem;
-    if (item.href === "#") return false;
+    if (item.href === "#" || !pathname) return false;
     if (item.href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(item.href) || pathname.startsWith(`/dashboard${item.href}`);
   };

@@ -9,11 +9,13 @@ export default function Header() {
   const pathname = usePathname();
 
   const getPageTitle = () => {
+    if (!pathname) return "Dashboard";
     if (pathname.includes("businesses")) return "Businesses";
     if (pathname.includes("categories")) return "Categories";
     if (pathname.includes("coupons")) return "Coupons";
     if (pathname.includes("notification")) return "Notification";
     if (pathname.includes("users")) return "Users";
+    if (pathname.includes("staff")) return "Staff accounts";
     return "Dashboard";
   };
 
