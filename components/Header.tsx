@@ -16,6 +16,7 @@ export default function Header() {
     if (pathname.includes("notification")) return "Notification";
     if (pathname.includes("users")) return "Users";
     if (pathname.includes("staff")) return "Staff accounts";
+    if (pathname.includes("roles")) return "Roles & permissions";
     return "Dashboard";
   };
 

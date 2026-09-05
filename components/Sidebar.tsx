@@ -28,7 +28,7 @@ const menuSections = [
     items: [
       { label: "Users", icon: "imgUser.svg", href: "/users" },
       { label: "Staff accounts", icon: "imgUserSquare.svg", href: "/staff" },
-      { label: "Roles & Permissions", icon: "imgUserOctagon.svg", href: "#" },
+      { label: "Roles & Permissions", icon: "imgUserOctagon.svg", href: "/roles" },
     ],
   },
 ];

@@ -16,6 +16,8 @@ export default function Home() {
   }
   const [visible, setVisible] = useState(false);
   const [notice, setNotice] = useState("");
+  const [loading, setLoading] = useState(false);
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (step === "email") {
@@ -27,10 +29,15 @@ export default function Home() {
         setNotice("Incorrect demo code. Enter 123456 to continue.");
         return;
       }
+      setLoading(true);
       router.push("/dashboard");
       return;
     }
-    setNotice("Sign-in is not available yet. Please contact your administrator.");
+    if (step === "signin") {
+      setLoading(true);
+      router.push("/dashboard");
+      return;
+    }
   }
   return (
     <main className="sign-in-page">
@@ -59,7 +66,9 @@ export default function Home() {
                 <button className="forgot-password" type="button" onClick={() => changeStep("email")}>Change email</button>
               </div>}
             </div>
-            <button className="primary-button" type="submit">{step === "signin" ? "Sign in" : step === "email" ? "Send code" : "Verify"}</button>
+            <button className="primary-button" type="submit" disabled={loading}>
+              {loading ? "Signing in..." : step === "signin" ? "Sign in" : step === "email" ? "Send code" : "Verify"}
+            </button>
             {step !== "signin" && <div className="recovery-footer">
               <p id="demo-help" className="demo-help">{step === "email" ? "Demo preview: no email will be sent." : "Demo preview: use 123456. This does not authenticate an account."}</p>
               <button className="forgot-password" type="button" onClick={() => changeStep("signin")}>Back to sign in</button>
