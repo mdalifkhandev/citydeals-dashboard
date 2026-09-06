@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import Modal from "@/components/Modal";
 
 const assetBase = "/assets/dashboard/";
@@ -121,6 +121,7 @@ const initialCoupons: Coupon[] = [
 export default function CouponsPage() {
   const [coupons, setCoupons] = useState<Coupon[]>(initialCoupons);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
   // Form states
   const [offer, setOffer] = useState("");
@@ -132,6 +133,37 @@ export default function CouponsPage() {
   const [frequency, setFrequency] = useState("One-time use");
   const [discussion, setDiscussion] = useState("");
   const [terms, setTerms] = useState("");
+
+  useEffect(() => {
+    return () => {
+      if (logoPreview) {
+        URL.revokeObjectURL(logoPreview);
+      }
+    };
+  }, [logoPreview]);
+
+  function handleLogoChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const nextPreview = URL.createObjectURL(file);
+    setLogoPreview((currentPreview) => {
+      if (currentPreview) {
+        URL.revokeObjectURL(currentPreview);
+      }
+      return nextPreview;
+    });
+  }
+
+  function formatDate(date: string) {
+    if (!date) return "30 Sep 2026";
+
+    return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  }
 
   const handleSaveCoupon = (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,7 +179,7 @@ export default function CouponsPage() {
         month: "short",
         year: "numeric",
       }),
-      endDate: expires.trim() || "30 Sep 2026",
+      endDate: formatDate(expires),
       status: "Published",
     };
 
@@ -287,18 +319,27 @@ export default function CouponsPage() {
           <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-3.5">
             <span className="relative size-16 shrink-0 overflow-hidden rounded-xl border border-slate-200">
               <Image
-                src={`${assetBase}imgLocationAvatar.png`}
+                src={logoPreview ?? `${assetBase}imgLocationAvatar.png`}
                 alt="Upload preview"
                 fill
+                sizes="64px"
                 className="scale-125 object-cover"
+                unoptimized={!!logoPreview}
               />
             </span>
-            <button
-              className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-800 shadow-sm transition-colors hover:bg-slate-50"
-              type="button"
+            <label
+              className="flex h-10 cursor-pointer items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-800 shadow-sm transition-colors hover:bg-slate-50"
+              htmlFor="coupon-logo-upload"
             >
               Upload Logo
-            </button>
+              <input
+                className="sr-only"
+                id="coupon-logo-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleLogoChange}
+              />
+            </label>
           </div>
 
           {/* Form Fields Card */}
@@ -396,19 +437,11 @@ export default function CouponsPage() {
                 <span className="text-xs font-semibold text-slate-800">Expires</span>
                 <div className="relative">
                   <input
+                    type="date"
                     value={expires}
                     onChange={(e) => setExpires(e.target.value)}
-                    placeholder="dd/mm/yyyy"
-                    className="h-10 w-full rounded-xl border border-slate-200/70 bg-[#f8fafc] px-3.5 pr-10 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition-colors focus:border-slate-400 focus:bg-white"
+                    className="h-10 w-full rounded-xl border border-slate-200/70 bg-[#f8fafc] px-3.5 text-sm text-slate-800 outline-none transition-colors focus:border-slate-400 focus:bg-white"
                   />
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
-                    <svg className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                      <line x1="16" y1="2" x2="16" y2="6" />
-                      <line x1="8" y1="2" x2="8" y2="6" />
-                      <line x1="3" y1="10" x2="21" y2="10" />
-                    </svg>
-                  </span>
                 </div>
               </label>
             </div>

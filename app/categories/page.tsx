@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import Modal from "@/components/Modal";
 
 const assetBase = "/assets/dashboard/";
@@ -28,6 +28,28 @@ const fields = [
 
 export default function CategoriesPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [iconPreview, setIconPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (iconPreview) {
+        URL.revokeObjectURL(iconPreview);
+      }
+    };
+  }, [iconPreview]);
+
+  function handleIconChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const nextPreview = URL.createObjectURL(file);
+    setIconPreview((currentPreview) => {
+      if (currentPreview) {
+        URL.revokeObjectURL(currentPreview);
+      }
+      return nextPreview;
+    });
+  }
 
   return (
     <div className="w-full px-8 py-6">
@@ -110,15 +132,33 @@ export default function CategoriesPage() {
       >
         <form className="flex flex-col gap-3">
           <div className="flex w-full items-center gap-6 rounded-3xl border border-[#e5e7eb] bg-gray-100 p-3.5">
-            <span className="grid size-[76px] place-items-center rounded-2xl border-2 border-[#d1d5db] bg-white">
+          <span className="relative grid size-[76px] place-items-center overflow-hidden rounded-2xl border-2 border-[#d1d5db] bg-white">
+            {iconPreview ? (
+              <Image
+                className="object-cover"
+                src={iconPreview}
+                alt=""
+                fill
+                sizes="76px"
+                unoptimized
+              />
+            ) : (
               <Image src={`${assetBase}imgTag2.svg`} alt="" width={36} height={36} />
-            </span>
-            <button
-              className="h-12 rounded-lg border border-[#e5e7eb] bg-gray-50 px-3.5 py-3 text-base font-medium leading-6 text-gray-900 shadow-md"
-              type="button"
-            >
-              Upload Icon
-            </button>
+            )}
+          </span>
+          <label
+            className="flex h-12 cursor-pointer items-center rounded-lg border border-[#e5e7eb] bg-gray-50 px-3.5 py-3 text-base font-medium leading-6 text-gray-900 shadow-md hover:bg-white"
+            htmlFor="category-icon-upload"
+          >
+            Upload Icon
+            <input
+              className="sr-only"
+              id="category-icon-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleIconChange}
+            />
+          </label>
           </div>
 
           <div className="rounded-3xl border border-[#e5e7eb] bg-white p-3.5">

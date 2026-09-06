@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import Modal from "@/components/Modal";
 
 const assetBase = "/assets/dashboard/";
@@ -100,18 +100,35 @@ const locations = [
 ];
 
 const fields = [
-  { label: "Name", placeholder: "Enter business name" },
-  { label: "Title text", placeholder: "Label" },
-  { label: "Category", placeholder: "Select category", wide: true, select: true },
-  { label: "Address", placeholder: "Search address: (e.g. 1560, New York, NY)", grow: true },
-  { label: "Website", placeholder: "www.example.com", className: "w-[254px]" },
-  { label: "Facebook", placeholder: "facebook.com/username" },
-  { label: "Instagram", placeholder: "instagram.com/username" },
-  { label: "TikTok", placeholder: "tiktok.com/@username" },
+  { label: "Name", placeholder: "Enter business name", span: "md:col-span-6" },
+  { label: "Title text", placeholder: "Label", span: "md:col-span-6" },
+  { label: "Category", placeholder: "Select category", span: "md:col-span-12", select: true },
 ];
 
 export default function BusinessesPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (logoPreview) {
+        URL.revokeObjectURL(logoPreview);
+      }
+    };
+  }, [logoPreview]);
+
+  function handleLogoChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const nextPreview = URL.createObjectURL(file);
+    setLogoPreview((currentPreview) => {
+      if (currentPreview) {
+        URL.revokeObjectURL(currentPreview);
+      }
+      return nextPreview;
+    });
+  }
 
   return (
     <div className="w-full p-8">
@@ -205,38 +222,38 @@ export default function BusinessesPage() {
           <div className="flex w-full items-center gap-6 rounded-3xl border border-[#e5e7eb] bg-gray-100 p-3.5">
             <Image
               className="size-[76px] rounded-2xl border-2 border-[#d1d5db] object-cover"
-              src={`${assetBase}imgBusinessLogo.png`}
+              src={logoPreview ?? `${assetBase}imgBusinessLogo.png`}
               alt=""
               width={76}
               height={76}
+              unoptimized={!!logoPreview}
             />
-            <button
-              className="h-12 rounded-lg border border-[#e5e7eb] bg-gray-50 px-3.5 py-3 text-base font-medium leading-6 text-gray-900 shadow-md"
-              type="button"
+            <label
+              className="flex h-12 cursor-pointer items-center rounded-lg border border-[#e5e7eb] bg-gray-50 px-3.5 py-3 text-base font-medium leading-6 text-gray-900 shadow-md hover:bg-white"
+              htmlFor="business-logo-upload"
             >
               Upload Logo
-            </button>
+              <input
+                className="sr-only"
+                id="business-logo-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleLogoChange}
+              />
+            </label>
           </div>
 
           <div className="rounded-3xl border border-[#e5e7eb] bg-white p-3.5">
-            <div className="grid grid-cols-6 gap-x-4 gap-y-3.5">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-3.5 md:grid-cols-12">
               {fields.map((field) => (
                 <label
-                  className={
-                    field.wide
-                      ? "col-span-6 grid gap-1"
-                      : field.grow
-                        ? "col-span-4 grid gap-1"
-                        : field.className
-                          ? `col-span-2 grid gap-1 ${field.className}`
-                          : "col-span-2 grid gap-1"
-                  }
+                  className={`grid min-w-0 gap-1 ${field.span}`}
                   key={field.label}
                 >
                   <span className="text-sm leading-5 text-slate-900">{field.label}</span>
-                  <span className="flex h-[42px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-100 px-3 py-2.5 text-sm leading-[22px] tracking-[0.22px] text-[#475569]">
+                  <span className="flex h-[42px] min-w-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-100 px-3 py-2.5 text-sm leading-[22px] tracking-[0.22px] text-[#475569]">
                     <input
-                      className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-[#475569]"
+                      className="w-full min-w-0 flex-1 truncate bg-transparent outline-none placeholder:text-[#475569]"
                       placeholder={field.placeholder}
                     />
                     {field.select && (
@@ -245,6 +262,25 @@ export default function BusinessesPage() {
                   </span>
                 </label>
               ))}
+              <label className="grid min-w-0 gap-1 md:col-span-12">
+                <span className="text-sm leading-5 text-slate-900">Address</span>
+                <span className="flex h-[42px] min-w-0 items-center rounded-lg border border-slate-200 bg-slate-100 px-3 py-2.5 text-sm leading-[22px] tracking-[0.22px] text-[#475569]">
+                  <input
+                    className="w-full min-w-0 flex-1 truncate bg-transparent outline-none placeholder:text-[#475569]"
+                    placeholder="Search address: (e.g. 1560, New York, NY)"
+                  />
+                </span>
+              </label>
+
+              <div className="grid min-w-0 gap-3.5 md:col-span-6">
+                <Field label="Website" placeholder="www.example.com" />
+                <Field label="Instagram" placeholder="instagram.com/username" />
+              </div>
+
+              <div className="grid min-w-0 gap-3.5 md:col-span-6">
+                <Field label="Facebook" placeholder="facebook.com/username" />
+                <Field label="TikTok" placeholder="tiktok.com/@username" />
+              </div>
             </div>
           </div>
 
@@ -269,4 +305,24 @@ export default function BusinessesPage() {
   );
 }
 
-
+function Field({
+  label,
+  placeholder,
+  className = "",
+}: {
+  label: string;
+  placeholder: string;
+  className?: string;
+}) {
+  return (
+    <label className={`grid min-w-0 gap-1 ${className}`}>
+      <span className="text-sm leading-5 text-slate-900">{label}</span>
+      <span className="flex h-[42px] min-w-0 items-center rounded-lg border border-slate-200 bg-slate-100 px-3 py-2.5 text-sm leading-[22px] tracking-[0.22px] text-[#475569]">
+        <input
+          className="w-full min-w-0 flex-1 truncate bg-transparent outline-none placeholder:text-[#475569]"
+          placeholder={placeholder}
+        />
+      </span>
+    </label>
+  );
+}
