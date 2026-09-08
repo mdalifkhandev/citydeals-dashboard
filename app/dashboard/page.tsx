@@ -25,7 +25,7 @@ export default function Dashboard() {
           >
             {stats.map((stat) => (
               <article
-                className="flex min-h-[93px] items-center gap-2.5 rounded-2xl bg-white px-2.5 py-3.5 shadow-[0_1px_1px_rgba(15,23,42,0.08),0_1px_1.5px_rgba(15,23,42,0.10)]"
+                className="flex min-h-[93px] items-center gap-2.5 rounded-2xl border border-slate-200 bg-white px-2.5 py-3.5 shadow-[0_1px_1px_rgba(15,23,42,0.08),0_1px_1.5px_rgba(15,23,42,0.10)]"
                 key={stat.label}
               >
                 <div className={`grid size-10 shrink-0 place-items-center rounded-full ${stat.tone}`}>
