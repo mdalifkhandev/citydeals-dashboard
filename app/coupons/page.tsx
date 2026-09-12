@@ -10,7 +10,7 @@ interface Coupon {
   id: string;
   offer: string;
   business: string;
-  badge: "Dining" | "Cafe" | "Retail" | "Entertainment";
+  badge: "Dining" | "Cafe" | "Retail" | "Entertainment" | "Birthday Perks";
   startDate: string;
   endDate: string;
   status: "Published" | "Draft" | "Expired";
@@ -152,6 +152,18 @@ const initialCoupons: Coupon[] = [
     likes: 57,
     redemptions: 16,
   },
+  {
+    id: "12",
+    offer: "Free birthday dessert",
+    business: "Joe's Burgers",
+    badge: "Birthday Perks",
+    startDate: "1 Sep 2026",
+    endDate: "30 Sep 2026",
+    status: "Published",
+    views: 340,
+    likes: 92,
+    redemptions: 28,
+  },
 ];
 
 export default function CouponsPage() {
@@ -257,7 +269,7 @@ export default function CouponsPage() {
   }
 
   function handleExport(format: "CSV" | "Excel" | "PDF") {
-    showToast(`${format} export prepared for current coupon report`);
+      showToast(`${format} export prepared for current merchant coupon report`);
   }
 
   function formatDate(date: string) {
@@ -574,7 +586,7 @@ export default function CouponsPage() {
               className="flex h-10 cursor-pointer items-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-800 shadow-sm transition-colors hover:bg-slate-50"
               htmlFor="coupon-logo-upload"
             >
-              Upload Logo
+              Upload Coupon Image
               <input
                 className="sr-only"
                 id="coupon-logo-upload"
@@ -644,6 +656,7 @@ export default function CouponsPage() {
                     <option value="Cafe">Cafe</option>
                     <option value="Retail">Retail</option>
                     <option value="Entertainment">Entertainment</option>
+                    <option value="Birthday Perks">Birthday Perks</option>
                   </select>
                   <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
                     <svg className="size-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
