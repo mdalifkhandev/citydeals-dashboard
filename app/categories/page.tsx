@@ -7,16 +7,12 @@ import Modal from "@/components/Modal";
 const assetBase = "/assets/dashboard/";
 
 const categories = [
-  ["Financial District Plaza", "financial-district-plaza", "55 Water St, New York, NY 10004, USA"],
-  ["Midtown East Suites", "midtown-east-suites", "600 Lexington Ave, New York, NY 10022, USA"],
-  ["SoHo Art Gallery", "soho-art-gallery", "131 Grand St, New York, NY 10013, USA"],
-  ["Battery Park Fitness", "battery-park-fitness", "75 Battery Pl, New York, NY 10280, USA"],
-  ["Chelsea Market", "chelsea-market", "75 9th Ave, New York, NY 10011, USA"],
-  ["Upper East Side Books", "upper-east-side-books", "123 Lexington Ave, New York, NY 10075, USA"],
-  ["Greenwich Village Theater", "greenwich-village-theater", "50 W 13th St, New York, NY 10011, USA"],
-  ["East Village Music Hall", "east-village-music-hall", "95 2nd Ave, New York, NY 10003, USA"],
-  ["Tribeca Tech Hub", "tribeca-tech-hub", "200 Hudson St, New York, NY 10013, USA"],
-  ["Harlem Jazz Cafe", "harlem-jazz-cafe", "230 W 125th St, New York, NY 10027, USA"],
+  { name: "Food", slug: "food", description: "Restaurants, cafes and dining offers", status: "Active" },
+  { name: "Shopping", slug: "shopping", description: "Retail stores, fashion and shopping deals", status: "Active" },
+  { name: "Groceries", slug: "groceries", description: "Daily essentials and grocery coupons", status: "Active" },
+  { name: "Electronics", slug: "electronics", description: "Devices, gadgets and tech offers", status: "Draft" },
+  { name: "Fitness", slug: "fitness", description: "Gyms, wellness and active lifestyle deals", status: "Active" },
+  { name: "Beauty", slug: "beauty", description: "Salon, spa and personal care coupons", status: "Draft" },
 ];
 
 const fields = [
@@ -29,6 +25,10 @@ const fields = [
 export default function CategoriesPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [iconPreview, setIconPreview] = useState<string | null>(null);
+  const [categoryList, setCategoryList] = useState(categories);
+  const [editingCategory, setEditingCategory] = useState<(typeof categories)[number] | null>(null);
+  const [openActionSlug, setOpenActionSlug] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
@@ -49,6 +49,50 @@ export default function CategoriesPage() {
       }
       return nextPreview;
     });
+  }
+
+  function showToast(message: string) {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(null), 2500);
+  }
+
+  function handleEditCategory(category: (typeof categories)[number]) {
+    setOpenActionSlug(null);
+    setEditingCategory(category);
+    setIsDrawerOpen(true);
+  }
+
+  function handleCloseDrawer() {
+    setIsDrawerOpen(false);
+    setEditingCategory(null);
+  }
+
+  function handleToggleStatus(slug: string) {
+    setOpenActionSlug(null);
+    setCategoryList((currentList) =>
+      currentList.map((category) =>
+        category.slug === slug
+          ? { ...category, status: category.status === "Active" ? "Draft" : "Active" }
+          : category
+      )
+    );
+
+    const category = categoryList.find((item) => item.slug === slug);
+    if (category) {
+      showToast(
+        `${category.name} ${category.status === "Active" ? "unpublished" : "published"}`
+      );
+    }
+  }
+
+  function handleDeleteCategory(slug: string) {
+    setOpenActionSlug(null);
+    const category = categoryList.find((item) => item.slug === slug);
+    setCategoryList((currentList) => currentList.filter((item) => item.slug !== slug));
+
+    if (category) {
+      showToast(`Deleted ${category.name}`);
+    }
   }
 
   return (
@@ -74,7 +118,7 @@ export default function CategoriesPage() {
               </button>
             </div>
 
-            <div className="mt-4 overflow-x-auto rounded-lg border border-slate-200">
+            <div className="mt-4 overflow-x-auto overflow-y-visible rounded-lg border border-slate-200">
               <div className="min-w-[760px]">
                 <div className="grid h-[55px] grid-cols-[minmax(220px,1.1fr)_minmax(260px,1.8fr)_110px_90px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
                   {["Name", "Description", "Status", "Actions"].map((heading) => (
@@ -84,10 +128,10 @@ export default function CategoriesPage() {
                   ))}
                 </div>
 
-                {categories.map(([name, slug, description]) => (
+                {categoryList.map((category) => (
                   <div
                     className="grid h-[52px] grid-cols-[minmax(220px,1.1fr)_minmax(260px,1.8fr)_110px_90px] items-center border-b border-dashed border-slate-200 bg-white last:border-b-0"
-                    key={slug}
+                    key={category.slug}
                   >
                     <div className="flex min-w-0 items-center gap-3 px-3 py-2">
                       <span className="relative size-8 shrink-0 overflow-hidden rounded">
@@ -101,21 +145,64 @@ export default function CategoriesPage() {
                       </span>
                       <span className="min-w-0">
                         <strong className="block truncate text-sm font-normal leading-5 text-slate-900">
-                          {name}
+                          {category.name}
                         </strong>
                         <small className="block truncate text-xs leading-4 text-[#475569]">
-                          {slug}
+                          {category.slug}
                         </small>
                       </span>
                     </div>
-                    <p className="truncate px-3 text-sm leading-5 text-slate-900">{description}</p>
+                    <p className="truncate px-3 text-sm leading-5 text-slate-900">{category.description}</p>
                     <div className="px-3">
-                      <span className="inline-flex h-6 items-center rounded bg-emerald-100 px-2 text-sm leading-5 text-[#16a34a]">
-                        Active
+                      <span
+                        className={
+                          category.status === "Active"
+                            ? "inline-flex h-6 items-center rounded bg-emerald-100 px-2 text-sm leading-5 text-[#16a34a]"
+                            : "inline-flex h-6 items-center rounded bg-slate-100 px-2 text-sm leading-5 text-slate-600"
+                        }
+                      >
+                        {category.status}
                       </span>
                     </div>
-                    <div className="flex justify-center px-3 text-2xl leading-none text-[#315576]">
-                      ...
+                    <div className="relative flex justify-center px-3">
+                      <button
+                        aria-expanded={openActionSlug === category.slug}
+                        aria-label={`Open actions for ${category.name}`}
+                        className="grid size-9 place-items-center rounded-lg border border-slate-300 bg-white text-lg font-bold leading-none text-[#0c4a6e] shadow-sm transition-colors hover:border-[#0c4a6e] hover:bg-sky-50"
+                        type="button"
+                        onClick={() =>
+                          setOpenActionSlug((currentSlug) =>
+                            currentSlug === category.slug ? null : category.slug
+                          )
+                        }
+                      >
+                        ⋮
+                      </button>
+                      {openActionSlug === category.slug && (
+                        <div className="absolute right-3 top-10 z-20 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 text-sm shadow-xl">
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-slate-700 hover:bg-slate-50"
+                            type="button"
+                            onClick={() => handleEditCategory(category)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-[#f97316] hover:bg-orange-50"
+                            type="button"
+                            onClick={() => handleToggleStatus(category.slug)}
+                          >
+                            {category.status === "Active" ? "Unpublish" : "Publish"}
+                          </button>
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-red-600 hover:bg-red-50"
+                            type="button"
+                            onClick={() => handleDeleteCategory(category.slug)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -125,12 +212,19 @@ export default function CategoriesPage() {
 
       <Modal
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        title="Add New Category"
-        subtitle="Enter category"
+        onClose={handleCloseDrawer}
+        title={editingCategory ? "Edit Category" : "Add New Category"}
+        subtitle={editingCategory ? `Update ${editingCategory.name}` : "Enter category"}
         maxWidth="max-w-[620px]"
       >
-        <form className="flex flex-col gap-3">
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={(event) => {
+            event.preventDefault();
+            showToast(editingCategory ? "Category changes saved" : "Category saved");
+            handleCloseDrawer();
+          }}
+        >
           <div className="flex w-full items-center gap-6 rounded-3xl border border-[#e5e7eb] bg-gray-100 p-3.5">
           <span className="relative grid size-[76px] place-items-center overflow-hidden rounded-2xl border-2 border-[#d1d5db] bg-white">
             {iconPreview ? (
@@ -187,7 +281,7 @@ export default function CategoriesPage() {
             <button
               className="h-12 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-base leading-6 text-slate-900 hover:bg-slate-100"
               type="button"
-              onClick={() => setIsDrawerOpen(false)}
+              onClick={handleCloseDrawer}
             >
               Cancel
             </button>
@@ -195,11 +289,17 @@ export default function CategoriesPage() {
               className="h-12 flex-1 rounded-xl bg-[#f97316] px-3 py-3 text-base leading-6 text-white hover:opacity-95"
               type="submit"
             >
-              Save Category
+              {editingCategory ? "Save Changes" : "Save Category"}
             </button>
           </div>
         </form>
       </Modal>
+
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-medium text-white shadow-xl">
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }

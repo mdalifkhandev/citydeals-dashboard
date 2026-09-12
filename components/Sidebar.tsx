@@ -8,20 +8,36 @@ const assetBase = "/assets/dashboard/";
 
 const menuSections = [
   {
-    title: "Overview",
+    title: "Main",
     items: [{ label: "Dashboard", icon: "imgElement2.svg", href: "/dashboard" }],
   },
   {
     title: "Directory",
     items: [
+      { label: "Areas", icon: "imgMapPin.svg", href: "/areas" },
       { label: "Businesses", icon: "imgShop.svg", href: "/businesses" },
       { label: "Categories", icon: "imgTag2.svg", href: "/categories" },
-      { label: "Notification", icon: "imgNotificationStatus.svg", href: "/notification" },
     ],
   },
   {
-    title: "Offers",
-    items: [{ label: "Coupons", icon: "imgTicket.svg", href: "/coupons" }],
+    title: "Coupons",
+    items: [
+      { label: "Coupons", icon: "imgTicket.svg", href: "/coupons" },
+      { label: "Redemptions", icon: "imgTicketExpired.svg", href: "/redemptions" },
+    ],
+  },
+  {
+    title: "Communication",
+    items: [
+      { label: "Notifications", icon: "imgNotification.svg", href: "/notifications" },
+      { label: "Support Tickets", icon: "imgNotificationStatus.svg", href: "/support-tickets" },
+    ],
+  },
+  {
+    title: "App Control",
+    items: [
+      { label: "Legal Pages", icon: "imgTicket.svg", href: "/legal-pages" },
+    ],
   },
   {
     title: "People",

@@ -15,6 +15,7 @@ const locations = [
     radius: "3.0 km",
     phone: "151-111-9991",
     email: "example@gmail.com",
+    status: "Active",
   },
   {
     name: "Midtown East Suites",
@@ -24,6 +25,7 @@ const locations = [
     radius: "1.1 km",
     phone: "151-111-9991",
     email: "example@gmail.com",
+    status: "Active",
   },
   {
     name: "SoHo Art Gallery",
@@ -33,6 +35,7 @@ const locations = [
     radius: "2.5 km",
     phone: "151-222-8888",
     email: "contact@sohoart.com",
+    status: "Draft",
   },
   {
     name: "Battery Park Fitness",
@@ -42,6 +45,7 @@ const locations = [
     radius: "4.2 km",
     phone: "151-333-7777",
     email: "info@batteryfit.com",
+    status: "Active",
   },
   {
     name: "Chelsea Market",
@@ -51,6 +55,7 @@ const locations = [
     radius: "3.8 km",
     phone: "151-444-6666",
     email: "contact@chelseamarket.com",
+    status: "Active",
   },
   {
     name: "Upper East Side Books",
@@ -60,6 +65,7 @@ const locations = [
     radius: "1.9 km",
     phone: "151-555-5555",
     email: "info@uesbooks.com",
+    status: "Draft",
   },
   {
     name: "Greenwich Village Theater",
@@ -69,6 +75,7 @@ const locations = [
     radius: "2.7 km",
     phone: "151-666-4444",
     email: "bookings@gvtheater.com",
+    status: "Active",
   },
   {
     name: "East Village Music Hall",
@@ -78,6 +85,7 @@ const locations = [
     radius: "2.3 km",
     phone: "151-777-3333",
     email: "contact@evmusichall.com",
+    status: "Active",
   },
   {
     name: "Tribeca Tech Hub",
@@ -87,6 +95,7 @@ const locations = [
     radius: "3.1 km",
     phone: "151-888-2222",
     email: "hello@tribecatech.com",
+    status: "Draft",
   },
   {
     name: "Harlem Jazz Cafe",
@@ -96,6 +105,7 @@ const locations = [
     radius: "5.5 km",
     phone: "151-999-1111",
     email: "info@harlemjazzcafe.com",
+    status: "Active",
   },
 ];
 
@@ -108,6 +118,10 @@ const fields = [
 export default function BusinessesPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [businessList, setBusinessList] = useState(locations);
+  const [editingBusiness, setEditingBusiness] = useState<(typeof locations)[number] | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [openActionSlug, setOpenActionSlug] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
@@ -130,6 +144,50 @@ export default function BusinessesPage() {
     });
   }
 
+  function showToast(message: string) {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(null), 2500);
+  }
+
+  function handleEditBusiness(location: (typeof locations)[number]) {
+    setOpenActionSlug(null);
+    setEditingBusiness(location);
+    setIsDrawerOpen(true);
+  }
+
+  function handleCloseDrawer() {
+    setIsDrawerOpen(false);
+    setEditingBusiness(null);
+  }
+
+  function handleToggleStatus(slug: string) {
+    setOpenActionSlug(null);
+    setBusinessList((currentList) =>
+      currentList.map((location) =>
+        location.slug === slug
+          ? { ...location, status: location.status === "Active" ? "Draft" : "Active" }
+          : location
+      )
+    );
+
+    const location = businessList.find((item) => item.slug === slug);
+    if (location) {
+      showToast(
+        `${location.name} ${location.status === "Active" ? "unpublished" : "published"}`
+      );
+    }
+  }
+
+  function handleDeleteBusiness(slug: string) {
+    setOpenActionSlug(null);
+    const location = businessList.find((item) => item.slug === slug);
+    setBusinessList((currentList) => currentList.filter((item) => item.slug !== slug));
+
+    if (location) {
+      showToast(`Deleted ${location.name}`);
+    }
+  }
+
   return (
     <div className="w-full p-8">
           <section className="rounded-2xl border border-[#d1d5db] bg-white p-3">
@@ -148,8 +206,8 @@ export default function BusinessesPage() {
               </button>
             </div>
 
-            <div className="mt-4 overflow-hidden rounded-lg border border-slate-200">
-              <div className="grid h-[55px] grid-cols-[minmax(220px,1.4fr)_minmax(170px,1fr)_140px_100px_189px_110px_72px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
+            <div className="mt-4 overflow-visible rounded-lg border border-slate-200">
+              <div className="grid h-[55px] grid-cols-[minmax(220px,1.4fr)_minmax(170px,1fr)_140px_100px_189px_110px_90px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
                 {["Location name", "Location", "Category", "Radius", "Contact", "Status", "Actions"].map(
                   (heading) => (
                     <div className="border-r border-slate-300 px-3 last:border-r-0" key={heading}>
@@ -159,9 +217,9 @@ export default function BusinessesPage() {
                 )}
               </div>
 
-              {locations.map((location) => (
+              {businessList.map((location) => (
                 <div
-                  className="grid h-[52px] grid-cols-[minmax(220px,1.4fr)_minmax(170px,1fr)_140px_100px_189px_110px_72px] items-center border-b border-dashed border-slate-200 bg-white last:border-b-0"
+                  className="grid h-[52px] grid-cols-[minmax(220px,1.4fr)_minmax(170px,1fr)_140px_100px_189px_110px_90px] items-center border-b border-dashed border-slate-200 bg-white last:border-b-0"
                   key={location.slug}
                 >
                   <div className="flex min-w-0 items-center gap-3 px-3 py-2">
@@ -199,12 +257,55 @@ export default function BusinessesPage() {
                     </small>
                   </div>
                   <div className="px-3">
-                    <span className="inline-flex h-6 items-center rounded bg-emerald-100 px-2 text-sm leading-5 text-[#16a34a]">
-                      Active
+                    <span
+                      className={
+                        location.status === "Active"
+                          ? "inline-flex h-6 items-center rounded bg-emerald-100 px-2 text-sm leading-5 text-[#16a34a]"
+                          : "inline-flex h-6 items-center rounded bg-slate-100 px-2 text-sm leading-5 text-slate-600"
+                      }
+                    >
+                      {location.status}
                     </span>
                   </div>
-                  <div className="flex justify-center px-3 text-2xl leading-none text-[#315576]">
-                    ...
+                  <div className="relative flex items-center justify-center px-3">
+                    <button
+                      aria-expanded={openActionSlug === location.slug}
+                      aria-label={`Open actions for ${location.name}`}
+                      className="grid size-9 place-items-center rounded-lg border border-slate-300 bg-white text-lg font-bold leading-none text-[#0c4a6e] shadow-sm transition-colors hover:border-[#0c4a6e] hover:bg-sky-50"
+                      type="button"
+                      onClick={() =>
+                        setOpenActionSlug((currentSlug) =>
+                          currentSlug === location.slug ? null : location.slug
+                        )
+                      }
+                    >
+                      ⋮
+                    </button>
+                    {openActionSlug === location.slug && (
+                      <div className="absolute right-3 top-10 z-20 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 text-sm shadow-xl">
+                        <button
+                          className="block w-full px-3.5 py-2 text-left text-slate-700 hover:bg-slate-50"
+                          type="button"
+                          onClick={() => handleEditBusiness(location)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="block w-full px-3.5 py-2 text-left text-[#f97316] hover:bg-orange-50"
+                          type="button"
+                          onClick={() => handleToggleStatus(location.slug)}
+                        >
+                          {location.status === "Active" ? "Unpublish" : "Publish"}
+                        </button>
+                        <button
+                          className="block w-full px-3.5 py-2 text-left text-red-600 hover:bg-red-50"
+                          type="button"
+                          onClick={() => handleDeleteBusiness(location.slug)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -213,12 +314,23 @@ export default function BusinessesPage() {
 
       <Modal
         isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-        title="Add New Business"
-        subtitle="Enter business"
+        onClose={handleCloseDrawer}
+        title={editingBusiness ? "Edit Business" : "Add New Business"}
+        subtitle={
+          editingBusiness
+            ? `Update ${editingBusiness.name}`
+            : "Enter business"
+        }
         maxWidth="max-w-[620px]"
       >
-        <form className="flex flex-col gap-3">
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={(event) => {
+            event.preventDefault();
+            showToast(editingBusiness ? "Business changes saved" : "Business saved");
+            handleCloseDrawer();
+          }}
+        >
           <div className="flex w-full items-center gap-6 rounded-3xl border border-[#e5e7eb] bg-gray-100 p-3.5">
             <Image
               className="size-[76px] rounded-2xl border-2 border-[#d1d5db] object-cover"
@@ -288,7 +400,7 @@ export default function BusinessesPage() {
             <button
               className="h-12 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-base leading-6 text-slate-900 hover:bg-slate-100"
               type="button"
-              onClick={() => setIsDrawerOpen(false)}
+              onClick={handleCloseDrawer}
             >
               Cancel
             </button>
@@ -296,11 +408,17 @@ export default function BusinessesPage() {
               className="h-12 flex-1 rounded-xl bg-[#f97316] px-3 py-3 text-base leading-6 text-white hover:opacity-95"
               type="submit"
             >
-              Save Business
+              {editingBusiness ? "Save Changes" : "Save Business"}
             </button>
           </div>
         </form>
       </Modal>
+
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-medium text-white shadow-xl">
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }
