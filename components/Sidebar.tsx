@@ -29,7 +29,7 @@ const menuSections = [
   {
     title: "Communication",
     items: [
-      { label: "Notifications", icon: "imgNotification.svg", href: "/notifications" },
+      { label: "Send Notifications", icon: "imgNotification.svg", href: "/notification" },
       { label: "Support Tickets", icon: "imgNotificationStatus.svg", href: "/support-tickets" },
     ],
   },

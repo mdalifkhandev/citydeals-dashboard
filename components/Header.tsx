@@ -37,7 +37,8 @@ export default function Header() {
     if (pathname.includes("businesses")) return "Businesses";
     if (pathname.includes("categories")) return "Categories";
     if (pathname.includes("coupons")) return "Coupons";
-    if (pathname.includes("notification")) return "Notification";
+    if (pathname === "/notification") return "Send notifications";
+    if (pathname === "/notifications") return "Notification inbox";
     if (pathname.includes("users")) return "Users";
     if (pathname.includes("staff")) return "Staff accounts";
     if (pathname.includes("roles")) return "Roles & permissions";
