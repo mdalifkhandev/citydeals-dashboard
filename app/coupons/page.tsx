@@ -14,6 +14,9 @@ interface Coupon {
   startDate: string;
   endDate: string;
   status: "Published" | "Draft" | "Expired";
+  views: number;
+  likes: number;
+  redemptions: number;
 }
 
 const initialCoupons: Coupon[] = [
@@ -25,6 +28,9 @@ const initialCoupons: Coupon[] = [
     startDate: "5 Aug 2026",
     endDate: "11 Sep 2026",
     status: "Published",
+    views: 1280,
+    likes: 214,
+    redemptions: 86,
   },
   {
     id: "2",
@@ -34,6 +40,9 @@ const initialCoupons: Coupon[] = [
     startDate: "5 Aug 2026",
     endDate: "11 Sep 2026",
     status: "Published",
+    views: 980,
+    likes: 176,
+    redemptions: 64,
   },
   {
     id: "3",
@@ -43,6 +52,9 @@ const initialCoupons: Coupon[] = [
     startDate: "10 Aug 2026",
     endDate: "15 Sep 2026",
     status: "Published",
+    views: 740,
+    likes: 121,
+    redemptions: 52,
   },
   {
     id: "4",
@@ -52,6 +64,9 @@ const initialCoupons: Coupon[] = [
     startDate: "12 Aug 2026",
     endDate: "20 Sep 2026",
     status: "Published",
+    views: 618,
+    likes: 89,
+    redemptions: 37,
   },
   {
     id: "5",
@@ -61,6 +76,9 @@ const initialCoupons: Coupon[] = [
     startDate: "8 Aug 2026",
     endDate: "30 Sep 2026",
     status: "Published",
+    views: 531,
+    likes: 77,
+    redemptions: 29,
   },
   {
     id: "6",
@@ -70,6 +88,9 @@ const initialCoupons: Coupon[] = [
     startDate: "14 Aug 2026",
     endDate: "25 Sep 2026",
     status: "Published",
+    views: 812,
+    likes: 134,
+    redemptions: 48,
   },
   {
     id: "7",
@@ -79,6 +100,9 @@ const initialCoupons: Coupon[] = [
     startDate: "11 Aug 2026",
     endDate: "18 Sep 2026",
     status: "Published",
+    views: 455,
+    likes: 61,
+    redemptions: 22,
   },
   {
     id: "8",
@@ -88,6 +112,9 @@ const initialCoupons: Coupon[] = [
     startDate: "13 Aug 2026",
     endDate: "22 Sep 2026",
     status: "Published",
+    views: 389,
+    likes: 44,
+    redemptions: 18,
   },
   {
     id: "9",
@@ -97,6 +124,9 @@ const initialCoupons: Coupon[] = [
     startDate: "15 Aug 2026",
     endDate: "30 Sep 2026",
     status: "Published",
+    views: 701,
+    likes: 98,
+    redemptions: 41,
   },
   {
     id: "10",
@@ -106,6 +136,9 @@ const initialCoupons: Coupon[] = [
     startDate: "10 Aug 2026",
     endDate: "15 Sep 2026",
     status: "Published",
+    views: 624,
+    likes: 81,
+    redemptions: 33,
   },
   {
     id: "11",
@@ -115,6 +148,9 @@ const initialCoupons: Coupon[] = [
     startDate: "16 Aug 2026",
     endDate: "30 Sep 2026",
     status: "Published",
+    views: 512,
+    likes: 57,
+    redemptions: 16,
   },
 ];
 
@@ -122,6 +158,11 @@ export default function CouponsPage() {
   const [coupons, setCoupons] = useState<Coupon[]>(initialCoupons);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
+  const [openActionId, setOpenActionId] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [merchantFilter, setMerchantFilter] = useState("All merchants");
+  const [statusFilter, setStatusFilter] = useState("All statuses");
 
   // Form states
   const [offer, setOffer] = useState("");
@@ -155,6 +196,70 @@ export default function CouponsPage() {
     });
   }
 
+  function showToast(message: string) {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(null), 2500);
+  }
+
+  function handleOpenNewCoupon() {
+    setEditingCoupon(null);
+    setIsModalOpen(true);
+  }
+
+  function handleCloseModal() {
+    setIsModalOpen(false);
+    setEditingCoupon(null);
+  }
+
+  function handleEditCoupon(coupon: Coupon) {
+    setOpenActionId(null);
+    setEditingCoupon(coupon);
+    setOffer(coupon.offer);
+    setBusiness(coupon.business);
+    setCategory(coupon.badge);
+    setExpires("");
+    setCouponCode("");
+    setRedemptionLimit("");
+    setDiscussion("");
+    setTerms("");
+    setIsModalOpen(true);
+  }
+
+  function handleToggleStatus(id: string) {
+    setOpenActionId(null);
+    setCoupons((currentCoupons) =>
+      currentCoupons.map((coupon) =>
+        coupon.id === id
+          ? {
+              ...coupon,
+              status: coupon.status === "Published" ? "Draft" : "Published",
+            }
+          : coupon
+      )
+    );
+
+    const coupon = coupons.find((item) => item.id === id);
+    if (coupon) {
+      showToast(
+        `${coupon.offer} ${coupon.status === "Published" ? "unpublished" : "published"}`
+      );
+    }
+  }
+
+  function handleDeleteCoupon(id: string) {
+    setOpenActionId(null);
+    const coupon = coupons.find((item) => item.id === id);
+    setCoupons((currentCoupons) => currentCoupons.filter((item) => item.id !== id));
+
+    if (coupon) {
+      showToast(`Deleted ${coupon.offer}`);
+    }
+  }
+
+  function handleExport(format: "CSV" | "Excel" | "PDF") {
+    showToast(`${format} export prepared for current coupon report`);
+  }
+
   function formatDate(date: string) {
     if (!date) return "30 Sep 2026";
 
@@ -169,6 +274,25 @@ export default function CouponsPage() {
     e.preventDefault();
     if (!offer.trim()) return;
 
+    if (editingCoupon) {
+      setCoupons((prev) =>
+        prev.map((coupon) =>
+          coupon.id === editingCoupon.id
+            ? {
+                ...coupon,
+                offer: offer.trim(),
+                business: business.trim() || coupon.business,
+                badge: (category as Coupon["badge"]) || coupon.badge,
+                endDate: formatDate(expires),
+              }
+            : coupon
+        )
+      );
+      handleCloseModal();
+      showToast("Coupon changes saved");
+      return;
+    }
+
     const newCoupon: Coupon = {
       id: Date.now().toString(),
       offer: offer.trim(),
@@ -181,10 +305,14 @@ export default function CouponsPage() {
       }),
       endDate: formatDate(expires),
       status: "Published",
+      views: 0,
+      likes: 0,
+      redemptions: 0,
     };
 
     setCoupons((prev) => [newCoupon, ...prev]);
-    setIsModalOpen(false);
+    handleCloseModal();
+    showToast("Coupon saved");
 
     // Reset fields
     setOffer("");
@@ -197,44 +325,125 @@ export default function CouponsPage() {
     setTerms("");
   };
 
+  const merchantOptions = [
+    "All merchants",
+    ...Array.from(new Set(coupons.map((coupon) => coupon.business))),
+  ];
+
+  const filteredCoupons = coupons.filter((coupon) => {
+    const merchantMatches =
+      merchantFilter === "All merchants" || coupon.business === merchantFilter;
+    const statusMatches = statusFilter === "All statuses" || coupon.status === statusFilter;
+    return merchantMatches && statusMatches;
+  });
+
+  const totalViews = filteredCoupons.reduce((sum, coupon) => sum + coupon.views, 0);
+  const totalLikes = filteredCoupons.reduce((sum, coupon) => sum + coupon.likes, 0);
+  const totalRedemptions = filteredCoupons.reduce((sum, coupon) => sum + coupon.redemptions, 0);
+
   return (
     <div className="w-full px-8 py-6">
           <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-3">
             <div className="flex h-12 items-center justify-between gap-5">
               <div className="min-w-0">
                 <h1 className="m-0 text-base font-normal leading-6 text-slate-900">
-                  Businesses
+                  Coupons
                 </h1>
                 <p className="mt-1 truncate text-sm leading-5 text-[#475569]">
-                  Manage all your businesses
+                  Manage all coupon offers, publishing status and redemption windows
                 </p>
               </div>
               <button
                 className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#f97316] px-4 py-3 text-base leading-6 text-white transition-opacity hover:opacity-95"
                 type="button"
-                onClick={() => setIsModalOpen(true)}
+                onClick={handleOpenNewCoupon}
               >
                 <Image src={`${assetBase}imgAdd.svg`} alt="" width={24} height={24} />
                 New coupon
               </button>
             </div>
 
-            <div className="mt-4 overflow-x-auto rounded-lg border border-slate-200">
-              <div className="min-w-[900px]">
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              {[
+                { label: "Total opens / views", value: totalViews.toLocaleString() },
+                { label: "Total likes", value: totalLikes.toLocaleString() },
+                { label: "Total redemptions", value: totalRedemptions.toLocaleString() },
+              ].map((item) => (
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4" key={item.label}>
+                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    {item.label}
+                  </p>
+                  <strong className="mt-1 block text-2xl font-semibold text-slate-900">
+                    {item.value}
+                  </strong>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-end justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div className="flex flex-wrap gap-3">
+                <label className="grid gap-1">
+                  <span className="text-xs font-medium text-slate-600">Merchant</span>
+                  <select
+                    className="h-10 min-w-48 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none focus:border-orange-400"
+                    value={merchantFilter}
+                    onChange={(event) => setMerchantFilter(event.target.value)}
+                  >
+                    {merchantOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="grid gap-1">
+                  <span className="text-xs font-medium text-slate-600">Status</span>
+                  <select
+                    className="h-10 min-w-40 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none focus:border-orange-400"
+                    value={statusFilter}
+                    onChange={(event) => setStatusFilter(event.target.value)}
+                  >
+                    {["All statuses", "Published", "Draft", "Expired"].map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="flex gap-2">
+                {(["CSV", "Excel", "PDF"] as const).map((format) => (
+                  <button
+                    className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                    key={format}
+                    type="button"
+                    onClick={() => handleExport(format)}
+                  >
+                    Export {format}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 overflow-x-auto overflow-y-visible rounded-lg border border-slate-200">
+              <div className="min-w-[1120px]">
                 {/* Table Header */}
-                <div className="grid h-[55px] grid-cols-[minmax(280px,1.6fr)_minmax(180px,1.1fr)_120px_160px_130px_70px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
+                <div className="grid h-[55px] grid-cols-[minmax(250px,1.5fr)_minmax(170px,1fr)_110px_140px_90px_80px_110px_120px_70px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
                   <div className="border-r border-slate-300 px-4">Offer</div>
                   <div className="border-r border-slate-300 px-4">Business</div>
                   <div className="border-r border-slate-300 px-4">Badge</div>
                   <div className="border-r border-slate-300 px-4">Rounds</div>
+                  <div className="border-r border-slate-300 px-4">Views</div>
+                  <div className="border-r border-slate-300 px-4">Likes</div>
+                  <div className="border-r border-slate-300 px-4">Redemptions</div>
                   <div className="border-r border-slate-300 px-4">Status</div>
                   <div className="px-4 text-center">Actions</div>
                 </div>
 
                 {/* Table Body */}
-                {coupons.map((coupon) => (
+                {filteredCoupons.map((coupon) => (
                   <div
-                    className="grid h-[60px] grid-cols-[minmax(280px,1.6fr)_minmax(180px,1.1fr)_120px_160px_130px_70px] items-center border-b border-dashed border-slate-200 bg-white transition-colors hover:bg-slate-50/70 last:border-b-0"
+                    className="grid h-[60px] grid-cols-[minmax(250px,1.5fr)_minmax(170px,1fr)_110px_140px_90px_80px_110px_120px_70px] items-center border-b border-dashed border-slate-200 bg-white transition-colors hover:bg-slate-50/70 last:border-b-0"
                     key={coupon.id}
                   >
                     {/* Offer column */}
@@ -275,31 +484,65 @@ export default function CouponsPage() {
                       </p>
                     </div>
 
+                    <p className="px-4 text-sm text-slate-900">{coupon.views.toLocaleString()}</p>
+                    <p className="px-4 text-sm text-slate-900">{coupon.likes.toLocaleString()}</p>
+                    <p className="px-4 text-sm text-slate-900">{coupon.redemptions.toLocaleString()}</p>
+
                     {/* Status column */}
                     <div className="px-4">
-                      <span className="inline-flex h-6 items-center rounded bg-emerald-100 px-2.5 text-xs font-medium leading-5 text-[#16a34a]">
+                      <span
+                        className={
+                          coupon.status === "Published"
+                            ? "inline-flex h-6 items-center rounded bg-emerald-100 px-2.5 text-xs font-medium leading-5 text-[#16a34a]"
+                            : coupon.status === "Expired"
+                              ? "inline-flex h-6 items-center rounded bg-red-100 px-2.5 text-xs font-medium leading-5 text-red-600"
+                              : "inline-flex h-6 items-center rounded bg-slate-100 px-2.5 text-xs font-medium leading-5 text-slate-600"
+                        }
+                      >
                         {coupon.status}
                       </span>
                     </div>
 
                     {/* Actions column */}
-                    <div className="flex justify-center px-4">
+                    <div className="relative flex justify-center px-4">
                       <button
                         type="button"
-                        aria-label="Actions"
-                        className="flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                        aria-expanded={openActionId === coupon.id}
+                        aria-label={`Open actions for ${coupon.offer}`}
+                        className="grid size-9 place-items-center rounded-lg border border-slate-300 bg-white text-lg font-bold leading-none text-[#0c4a6e] shadow-sm transition-colors hover:border-[#0c4a6e] hover:bg-sky-50"
+                        onClick={() =>
+                          setOpenActionId((currentId) =>
+                            currentId === coupon.id ? null : coupon.id
+                          )
+                        }
                       >
-                        <svg
-                          className="size-5"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <circle cx="10" cy="4" r="1.5" />
-                          <circle cx="10" cy="10" r="1.5" />
-                          <circle cx="10" cy="16" r="1.5" />
-                        </svg>
+                        ⋮
                       </button>
+                      {openActionId === coupon.id && (
+                        <div className="absolute right-4 top-10 z-20 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 text-sm shadow-xl">
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-slate-700 hover:bg-slate-50"
+                            type="button"
+                            onClick={() => handleEditCoupon(coupon)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-[#f97316] hover:bg-orange-50"
+                            type="button"
+                            onClick={() => handleToggleStatus(coupon.id)}
+                          >
+                            {coupon.status === "Published" ? "Unpublish" : "Publish"}
+                          </button>
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-red-600 hover:bg-red-50"
+                            type="button"
+                            onClick={() => handleDeleteCoupon(coupon.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -310,8 +553,8 @@ export default function CouponsPage() {
       {/* Reusable Centered Modal */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="New coupon"
+        onClose={handleCloseModal}
+        title={editingCoupon ? "Edit coupon" : "New coupon"}
         maxWidth="max-w-[560px]"
       >
         <form onSubmit={handleSaveCoupon} className="flex flex-col gap-4">
@@ -495,7 +738,7 @@ export default function CouponsPage() {
           <div className="flex w-full items-center gap-3 pt-1">
             <button
               type="button"
-              onClick={() => setIsModalOpen(false)}
+              onClick={handleCloseModal}
               className="h-11 flex-1 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 transition-colors hover:bg-slate-50"
             >
               Cancel
@@ -504,11 +747,17 @@ export default function CouponsPage() {
               type="submit"
               className="h-11 flex-1 rounded-xl bg-[#f97316] text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
             >
-              Save coupon
+              {editingCoupon ? "Save changes" : "Save coupon"}
             </button>
           </div>
         </form>
       </Modal>
+
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-medium text-white shadow-xl">
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Modal from "@/components/Modal";
 
 interface StaffMember {
   id: string;
@@ -37,7 +38,6 @@ const initialStaff: StaffMember[] = [
 ];
 
 const availableRoles = [
-  "Super Administrator",
   "Administrator",
   "Manager",
   "Editor",
@@ -47,8 +47,14 @@ const availableRoles = [
 export default function StaffAccountsPage() {
   const [staffList, setStaffList] = useState<StaffMember[]>(initialStaff);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isAddStaffOpen, setIsAddStaffOpen] = useState(false);
+  const [newStaffName, setNewStaffName] = useState("");
+  const [newStaffEmail, setNewStaffEmail] = useState("");
+  const [newStaffRole, setNewStaffRole] = useState("Administrator");
 
   const handleRoleChange = (id: string, newRole: string) => {
+    if (newRole === "Super Administrator") return;
+
     setStaffList((prev) =>
       prev.map((member) =>
         member.id === id ? { ...member, currentRole: newRole } : member
@@ -58,6 +64,17 @@ export default function StaffAccountsPage() {
     const member = staffList.find((m) => m.id === id);
     if (member) {
       setToastMessage(`Updated ${member.name}'s role to "${newRole}"`);
+      setTimeout(() => setToastMessage(null), 2500);
+    }
+  };
+
+  const handleRemoveStaff = (id: string) => {
+    const member = staffList.find((staff) => staff.id === id);
+
+    setStaffList((prev) => prev.filter((staff) => staff.id !== id));
+
+    if (member) {
+      setToastMessage(`Removed ${member.name} from staff accounts`);
       setTimeout(() => setToastMessage(null), 2500);
     }
   };
@@ -77,33 +94,63 @@ export default function StaffAccountsPage() {
     }
   };
 
+  const handleAddStaff = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!newStaffName.trim() || !newStaffEmail.trim()) return;
+
+    const nextStaff: StaffMember = {
+      id: Date.now().toString(),
+      name: newStaffName.trim(),
+      email: newStaffEmail.trim(),
+      currentRole: newStaffRole,
+    };
+
+    setStaffList((prev) => [nextStaff, ...prev]);
+    setNewStaffName("");
+    setNewStaffEmail("");
+    setNewStaffRole("Administrator");
+    setIsAddStaffOpen(false);
+    setToastMessage(`Added ${nextStaff.name} as "${nextStaff.currentRole}"`);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
+
   return (
     <div className="w-full px-8 py-6">
       <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-4">
         {/* Header Title & Description */}
-        <div className="px-1 py-1">
-          <h1 className="m-0 text-base font-normal leading-6 text-slate-900">
-            Staff accounts & roles
-          </h1>
-          <p className="mt-1 text-sm leading-5 text-[#475569]">
-            Give each team member exactly one role. Permissions attached to that role decide what they can reach.
-          </p>
+        <div className="flex items-start justify-between gap-4 px-1 py-1">
+          <div className="min-w-0">
+            <h1 className="m-0 text-base font-normal leading-6 text-slate-900">
+              Staff accounts & roles
+            </h1>
+            <p className="mt-1 text-sm leading-5 text-[#475569]">
+              Give each team member exactly one role. Permissions attached to that role decide what they can reach.
+            </p>
+          </div>
+          <button
+            className="flex h-12 shrink-0 items-center justify-center rounded-xl bg-[#f97316] px-4 py-3 text-base leading-6 text-white transition-opacity hover:opacity-95"
+            type="button"
+            onClick={() => setIsAddStaffOpen(true)}
+          >
+            Add Staff
+          </button>
         </div>
 
         {/* Table Container */}
         <div className="mt-4 overflow-x-auto rounded-lg border border-slate-200">
-          <div className="min-w-[760px]">
+          <div className="min-w-[900px]">
             {/* Table Header */}
-            <div className="grid h-[55px] grid-cols-[minmax(260px,1.2fr)_minmax(200px,1fr)_minmax(260px,1.2fr)] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
+            <div className="grid h-[55px] grid-cols-[minmax(260px,1.2fr)_minmax(200px,1fr)_minmax(260px,1.2fr)_140px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
               <div className="border-r border-slate-300 px-6">Person</div>
               <div className="border-r border-slate-300 px-6">Current role</div>
-              <div className="px-6">Assign role</div>
+              <div className="border-r border-slate-300 px-6">Assign role</div>
+              <div className="px-6">Action</div>
             </div>
 
             {/* Table Body */}
             {staffList.map((staff) => (
               <div
-                className="grid h-[64px] grid-cols-[minmax(260px,1.2fr)_minmax(200px,1fr)_minmax(260px,1.2fr)] items-center border-b border-dashed border-slate-200 bg-white transition-colors hover:bg-slate-50/70 last:border-b-0"
+                className="grid h-[64px] grid-cols-[minmax(260px,1.2fr)_minmax(200px,1fr)_minmax(260px,1.2fr)_140px] items-center border-b border-dashed border-slate-200 bg-white transition-colors hover:bg-slate-50/70 last:border-b-0"
                 key={staff.id}
               >
                 {/* Person Column */}
@@ -129,40 +176,123 @@ export default function StaffAccountsPage() {
 
                 {/* Assign Role Dropdown */}
                 <div className="px-6">
-                  <div className="relative w-full max-w-[280px]">
-                    <select
-                      value={staff.currentRole}
-                      onChange={(e) => handleRoleChange(staff.id, e.target.value)}
-                      className="h-10 w-full appearance-none rounded-xl border border-[#fed7aa] bg-[#fff7ed] px-3.5 pr-9 text-sm text-slate-900 outline-none transition-colors focus:border-orange-400 focus:bg-white"
-                    >
-                      {availableRoles.map((role) => (
-                        <option value={role} key={role}>
-                          {role}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
-                      <svg
-                        className="size-4"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
+                  {staff.currentRole === "Super Administrator" ? (
+                    <div className="flex h-10 w-full max-w-[280px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-500">
+                      Protected role
+                    </div>
+                  ) : (
+                    <div className="relative w-full max-w-[280px]">
+                      <select
+                        value={staff.currentRole}
+                        onChange={(e) => handleRoleChange(staff.id, e.target.value)}
+                        className="h-10 w-full appearance-none rounded-xl border border-[#fed7aa] bg-[#fff7ed] px-3.5 pr-9 text-sm text-slate-900 outline-none transition-colors focus:border-orange-400 focus:bg-white"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </span>
-                  </div>
+                        {availableRoles.map((role) => (
+                          <option value={role} key={role}>
+                            {role}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+                        <svg
+                          className="size-4"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Remove Staff */}
+                <div className="px-6">
+                  <button
+                    className="h-10 rounded-xl border border-red-200 bg-red-50 px-4 text-sm font-medium text-red-600 transition-colors hover:border-red-300 hover:bg-red-100"
+                    type="button"
+                    onClick={() => handleRemoveStaff(staff.id)}
+                  >
+                    Remove
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      <Modal
+        isOpen={isAddStaffOpen}
+        onClose={() => setIsAddStaffOpen(false)}
+        title="Add Staff"
+        subtitle="Create a dashboard staff account and assign a role"
+        maxWidth="max-w-[520px]"
+      >
+        <form className="flex flex-col gap-4" onSubmit={handleAddStaff}>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="grid gap-3.5">
+              <label className="grid gap-1">
+                <span className="text-sm leading-5 text-slate-900">Full name</span>
+                <input
+                  className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-orange-400 focus:bg-white"
+                  placeholder="Enter staff full name"
+                  value={newStaffName}
+                  onChange={(event) => setNewStaffName(event.target.value)}
+                />
+              </label>
+
+              <label className="grid gap-1">
+                <span className="text-sm leading-5 text-slate-900">Email address</span>
+                <input
+                  className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-3.5 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-orange-400 focus:bg-white"
+                  placeholder="staff@example.com"
+                  type="email"
+                  value={newStaffEmail}
+                  onChange={(event) => setNewStaffEmail(event.target.value)}
+                />
+              </label>
+
+              <label className="grid gap-1">
+                <span className="text-sm leading-5 text-slate-900">Role</span>
+                <select
+                  className="h-11 rounded-xl border border-[#fed7aa] bg-[#fff7ed] px-3.5 text-sm text-slate-900 outline-none transition-colors focus:border-orange-400 focus:bg-white"
+                  value={newStaffRole}
+                  onChange={(event) => setNewStaffRole(event.target.value)}
+                >
+                  {availableRoles.map((role) => (
+                    <option value={role} key={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              className="h-11 flex-1 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 transition-colors hover:bg-slate-50"
+              type="button"
+              onClick={() => setIsAddStaffOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="h-11 flex-1 rounded-xl bg-[#f97316] text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
+              type="submit"
+            >
+              Save Staff
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Toast Feedback Notification */}
       {toastMessage && (
