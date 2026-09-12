@@ -11,7 +11,7 @@ const targets = [
   "Birthday users",
 ];
 
-const birthdayOfferCategories = ["Food", "Cafe", "Beauty", "Shopping", "Entertainment"];
+const birthdayOfferCategories = ["Birthday Perks", "Food", "Cafe", "Beauty", "Shopping", "Entertainment"];
 
 export default function SendNotificationPage() {
   const [title, setTitle] = useState("");
