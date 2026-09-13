@@ -44,11 +44,14 @@ const initialTickets: SupportTicket[] = [
   },
 ];
 
+const ticketStatuses: TicketStatus[] = ["Open", "Pending", "Closed"];
+
 export default function SupportTicketsPage() {
   const [tickets, setTickets] = useState(initialTickets);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [replyMessage, setReplyMessage] = useState("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [openStatusMenuId, setOpenStatusMenuId] = useState<string | null>(null);
 
   function showToast(message: string) {
     setToastMessage(message);
@@ -86,6 +89,7 @@ export default function SupportTicketsPage() {
   }
 
   function handleStatusChange(id: string, status: TicketStatus) {
+    setOpenStatusMenuId(null);
     setTickets((currentTickets) =>
       currentTickets.map((ticket) => (ticket.id === id ? { ...ticket, status } : ticket))
     );
@@ -98,17 +102,58 @@ export default function SupportTicketsPage() {
     return "bg-slate-100 text-slate-600";
   }
 
+  function renderStatusMenu(ticket: SupportTicket) {
+    const isOpen = openStatusMenuId === ticket.id;
+
+    return (
+      <div className="relative min-w-0">
+        <button
+          aria-expanded={isOpen}
+          className="flex h-10 w-full min-w-0 items-center justify-between gap-2 rounded-lg border border-slate-200 bg-white px-3 text-left text-xs text-slate-700 outline-none transition-colors hover:border-[#f97316] hover:bg-orange-50 focus:border-[#f97316] focus:ring-2 focus:ring-orange-100 lg:h-9"
+          type="button"
+          onClick={() => setOpenStatusMenuId((currentId) => (currentId === ticket.id ? null : ticket.id))}
+        >
+          <span>{ticket.status}</span>
+          <span className="text-[#f97316]">⌄</span>
+        </button>
+
+        {isOpen && (
+          <div className="absolute left-0 top-[calc(100%+4px)] z-30 w-full min-w-36 overflow-hidden rounded-lg border border-orange-200 bg-white py-1 text-xs shadow-xl">
+            {ticketStatuses.map((status) => {
+              const isSelected = status === ticket.status;
+
+              return (
+                <button
+                  className={
+                    isSelected
+                      ? "block w-full bg-[#f97316] px-3 py-2 text-left font-medium text-white"
+                      : "block w-full px-3 py-2 text-left text-slate-700 hover:bg-orange-100 hover:text-orange-800"
+                  }
+                  key={status}
+                  type="button"
+                  onClick={() => handleStatusChange(ticket.id, status)}
+                >
+                  {status}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full px-8 py-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-5">
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <h1 className="text-2xl font-semibold text-slate-900">Help & Support Tickets</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm leading-5 text-slate-500">
               Review support requests, send replies and update ticket status.
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-sm">
+          <div className="grid w-full grid-cols-3 gap-2 text-sm sm:w-auto">
             {["Open", "Pending", "Closed"].map((status) => (
               <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2" key={status}>
                 <span className="block text-xs text-slate-500">{status}</span>
@@ -120,7 +165,56 @@ export default function SupportTicketsPage() {
           </div>
         </div>
 
-        <div className="mt-5 overflow-x-auto overflow-y-visible rounded-xl border border-slate-200">
+        <div className="mt-5 grid gap-3 lg:hidden">
+          {tickets.map((ticket) => (
+            <article
+              className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+              key={ticket.id}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-semibold text-slate-900">{ticket.id}</span>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-xs font-medium ${getStatusClass(
+                        ticket.status
+                      )}`}
+                    >
+                      {ticket.status}
+                    </span>
+                  </div>
+                  <h2 className="mt-2 text-sm font-medium leading-5 text-slate-900">
+                    {ticket.user}
+                  </h2>
+                  <p className="truncate text-xs leading-4 text-slate-500">{ticket.email}</p>
+                </div>
+                <span className="shrink-0 text-xs text-slate-500">{ticket.created}</span>
+              </div>
+
+              <div className="mt-3 rounded-lg bg-slate-50 p-3">
+                <p className="text-sm leading-5 text-slate-900">{ticket.message}</p>
+                {ticket.response && (
+                  <p className="mt-2 text-xs leading-5 text-slate-500">
+                    Reply: {ticket.response}
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-3 grid grid-cols-[1fr_auto] gap-2">
+                {renderStatusMenu(ticket)}
+                <button
+                  className="h-10 rounded-lg bg-[#f97316] px-4 text-xs font-medium text-white hover:opacity-95"
+                  type="button"
+                  onClick={() => openReply(ticket)}
+                >
+                  Reply
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 hidden overflow-x-auto overflow-y-visible rounded-xl border border-slate-200 lg:block">
           <div className="min-w-[980px]">
             <div className="grid grid-cols-[100px_1fr_1.7fr_110px_120px_210px] bg-slate-100 text-sm text-[#315576]">
               {["Ticket", "User", "Message", "Status", "Created", "Actions"].map((heading) => (
@@ -162,17 +256,7 @@ export default function SupportTicketsPage() {
                   >
                     Reply
                   </button>
-                  <select
-                    className="h-9 rounded-lg border border-slate-200 bg-white px-2 text-xs text-slate-700 outline-none focus:border-orange-400"
-                    value={ticket.status}
-                    onChange={(event) =>
-                      handleStatusChange(ticket.id, event.target.value as TicketStatus)
-                    }
-                  >
-                    <option value="Open">Open</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Closed">Closed</option>
-                  </select>
+                  <div className="w-28">{renderStatusMenu(ticket)}</div>
                 </div>
               </div>
             ))}

@@ -8,7 +8,7 @@ const shares = [
 
 export default function ShareAnalyticsPage() {
   return (
-    <div className="w-full px-8 py-6">
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-5">
         <h1 className="text-2xl font-semibold text-slate-900">Coupon Share Analytics</h1>
         <p className="mt-1 text-sm text-slate-500">Track coupon sharing by SMS, email and social channels.</p>

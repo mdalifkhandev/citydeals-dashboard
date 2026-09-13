@@ -28,7 +28,11 @@ const notifications = [
   },
 ];
 
-export default function Header() {
+type HeaderProps = {
+  onMenuClick?: () => void;
+};
+
+export default function Header({ onMenuClick }: HeaderProps) {
   const pathname = usePathname();
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -48,16 +52,26 @@ export default function Header() {
   };
 
   return (
-    <header className="flex h-[74px] items-center justify-between gap-6 border-b border-[#eef3f8] bg-white px-8 py-2">
-      <div className="flex items-center gap-2 whitespace-nowrap text-sm leading-[22px] tracking-[0.22px]">
-        <span className="text-[#919eab]">CityDeals</span>
-        <span className="text-[#919eab]">/</span>
-        <strong className="font-normal text-[#141a21]">{getPageTitle()}</strong>
+    <header className="sticky top-0 z-30 flex min-h-[64px] items-center justify-between gap-3 border-b border-[#eef3f8] bg-white px-4 py-2 lg:min-h-[74px] lg:px-8">
+      <div className="flex min-w-0 items-center gap-2 text-sm leading-[22px] tracking-[0.22px]">
+        <button
+          className="grid size-10 shrink-0 place-items-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 lg:hidden"
+          type="button"
+          aria-label="Open navigation"
+          onClick={onMenuClick}
+        >
+          <svg className="size-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <span className="shrink-0 text-[#919eab]">CityDeals</span>
+        <span className="shrink-0 text-[#919eab]">/</span>
+        <strong className="truncate font-normal text-[#141a21]">{getPageTitle()}</strong>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3 lg:gap-4">
         <Link
-          className="grid size-12 place-items-center rounded-[25px_22.5px_25px_25px] bg-slate-50 shadow-sm transition-colors hover:bg-slate-100"
+          className="grid size-10 place-items-center rounded-2xl bg-slate-50 shadow-sm transition-colors hover:bg-slate-100 sm:size-12 sm:rounded-[25px_22.5px_25px_25px]"
           href="/search"
           aria-label="Search"
         >
@@ -66,7 +80,7 @@ export default function Header() {
 
         <div className="relative">
           <button
-            className="relative grid size-12 place-items-center rounded-[25px_22.5px_25px_25px] bg-slate-50 shadow-sm transition-colors hover:bg-slate-100"
+            className="relative grid size-10 place-items-center rounded-2xl bg-slate-50 shadow-sm transition-colors hover:bg-slate-100 sm:size-12 sm:rounded-[25px_22.5px_25px_25px]"
             type="button"
             aria-label="Notifications"
             aria-expanded={showNotifications}
@@ -77,7 +91,7 @@ export default function Header() {
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 top-[58px] z-50 w-[360px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.16)]">
+            <div className="fixed left-4 right-4 top-[68px] z-50 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.16)] sm:absolute sm:left-auto sm:right-0 sm:top-[58px] sm:w-[360px]">
               <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                 <div>
                   <h2 className="text-base font-semibold leading-6 text-slate-900">Notifications</h2>
@@ -124,11 +138,11 @@ export default function Header() {
         </div>
 
         <Link
-          className="flex h-[58px] w-[225px] items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-1.5 text-left transition-colors hover:bg-slate-100"
+          className="flex size-10 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 text-left transition-colors hover:bg-slate-100 sm:h-[58px] sm:w-[225px] sm:justify-start sm:gap-2 sm:rounded-lg sm:px-4 sm:py-1.5"
           href="/profile"
           aria-label="Profile"
         >
-          <span className="grid size-[37px] place-items-center overflow-hidden rounded-lg border border-[#0c4a6e] p-0.5">
+          <span className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-lg border border-[#0c4a6e] p-0.5 sm:size-[37px]">
             <Image
               className="size-full rounded-md object-cover"
               src={`${assetBase}imgAdminAvatarNew.png`}
@@ -137,7 +151,7 @@ export default function Header() {
               height={33}
             />
           </span>
-          <span className="min-w-0">
+          <span className="hidden min-w-0 sm:block">
             <strong className="block text-base font-normal leading-6 text-slate-900">Admin</strong>
             <small className="block truncate text-sm leading-5 text-slate-600/65">
               jack.will95@gmail.com

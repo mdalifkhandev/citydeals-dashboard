@@ -115,12 +115,12 @@ export default function StaffAccountsPage() {
   };
 
   return (
-    <div className="w-full px-8 py-6">
-      <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-4">
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+      <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-3 sm:p-4">
         {/* Header Title & Description */}
-        <div className="flex items-start justify-between gap-4 px-1 py-1">
+        <div className="flex flex-col gap-4 px-1 py-1 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <h1 className="m-0 text-base font-normal leading-6 text-slate-900">
+            <h1 className="m-0 text-2xl font-normal leading-8 text-slate-900 sm:text-base sm:leading-6">
               Staff accounts & roles
             </h1>
             <p className="mt-1 text-sm leading-5 text-[#475569]">
@@ -128,7 +128,7 @@ export default function StaffAccountsPage() {
             </p>
           </div>
           <button
-            className="flex h-12 shrink-0 items-center justify-center rounded-xl bg-[#f97316] px-4 py-3 text-base leading-6 text-white transition-opacity hover:opacity-95"
+            className="flex h-12 w-full shrink-0 items-center justify-center rounded-xl bg-[#f97316] px-4 py-3 text-base leading-6 text-white transition-opacity hover:opacity-95 sm:w-auto"
             type="button"
             onClick={() => setIsAddStaffOpen(true)}
           >
@@ -136,8 +136,82 @@ export default function StaffAccountsPage() {
           </button>
         </div>
 
+        <div className="mt-4 grid gap-3 lg:hidden">
+          {staffList.map((staff) => (
+            <article
+              className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+              key={staff.id}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#0c4a6e] text-sm font-semibold text-white">
+                    {staff.name[0]}
+                  </div>
+                  <div className="min-w-0">
+                    <strong className="block truncate text-sm font-medium leading-5 text-slate-900">
+                      {staff.name}
+                    </strong>
+                    <small className="block truncate text-xs leading-4 text-[#475569]">
+                      {staff.email}
+                    </small>
+                  </div>
+                </div>
+                <span
+                  className={`shrink-0 rounded-md px-2.5 py-1 text-xs font-medium ${getRoleBadgeStyle(
+                    staff.currentRole
+                  )}`}
+                >
+                  {staff.currentRole}
+                </span>
+              </div>
+
+              <div className="mt-3 grid gap-2 rounded-lg bg-slate-50 p-3">
+                <span className="text-xs font-medium text-slate-500">Assign role</span>
+                {staff.currentRole === "Super Administrator" ? (
+                  <div className="flex h-10 w-full items-center rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-500">
+                    Protected role
+                  </div>
+                ) : (
+                  <div className="relative w-full">
+                    <select
+                      value={staff.currentRole}
+                      onChange={(e) => handleRoleChange(staff.id, e.target.value)}
+                      className="h-10 w-full appearance-none rounded-xl border border-[#fed7aa] bg-[#fff7ed] px-3.5 pr-9 text-sm text-slate-900 outline-none transition-colors focus:border-orange-400 focus:bg-white"
+                    >
+                      {availableRoles.map((role) => (
+                        <option value={role} key={role}>
+                          {role}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+                      <svg
+                        className="size-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <button
+                className="mt-3 h-10 w-full rounded-xl border border-red-200 bg-red-50 px-4 text-sm font-medium text-red-600 transition-colors hover:border-red-300 hover:bg-red-100"
+                type="button"
+                onClick={() => handleRemoveStaff(staff.id)}
+              >
+                Remove
+              </button>
+            </article>
+          ))}
+        </div>
+
         {/* Table Container */}
-        <div className="mt-4 overflow-x-auto rounded-lg border border-slate-200">
+        <div className="mt-4 hidden overflow-x-auto rounded-lg border border-slate-200 lg:block">
           <div className="min-w-[900px]">
             {/* Table Header */}
             <div className="grid h-[55px] grid-cols-[minmax(260px,1.2fr)_minmax(200px,1fr)_minmax(260px,1.2fr)_140px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">

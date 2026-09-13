@@ -189,15 +189,15 @@ export default function BusinessesPage() {
   }
 
   return (
-    <div className="w-full p-8">
+    <div className="w-full p-4 sm:p-6 lg:p-8">
           <section className="rounded-2xl border border-[#d1d5db] bg-white p-3">
-            <div className="flex h-12 items-center justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <h1 className="m-0 text-base font-normal leading-6 text-slate-900">Businesses</h1>
                 <p className="mt-1 text-sm leading-5 text-[#475569]">Manage all your businesses</p>
               </div>
               <button
-                className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[#f97316] px-3 py-3 text-base leading-6 text-white"
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#f97316] px-3 py-3 text-base leading-6 text-white sm:w-auto"
                 type="button"
                 onClick={() => setIsDrawerOpen(true)}
               >
@@ -206,7 +206,105 @@ export default function BusinessesPage() {
               </button>
             </div>
 
-            <div className="mt-4 overflow-visible rounded-lg border border-slate-200">
+            <div className="mt-4 grid gap-3 lg:hidden">
+              {businessList.map((location) => (
+                <article className="rounded-2xl border border-slate-200 bg-white p-4" key={location.slug}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 gap-3">
+                      <span className="relative size-10 shrink-0 overflow-hidden rounded-lg">
+                        <Image
+                          className="scale-150 object-cover"
+                          src={`${assetBase}imgLocationAvatar.png`}
+                          alt=""
+                          fill
+                          sizes="40px"
+                        />
+                      </span>
+                      <div className="min-w-0">
+                        <h2 className="truncate text-sm font-semibold text-slate-900">
+                          {location.name}
+                        </h2>
+                        <p className="truncate text-xs text-slate-500">{location.slug}</p>
+                      </div>
+                    </div>
+
+                    <div className="relative shrink-0">
+                      <button
+                        aria-expanded={openActionSlug === location.slug}
+                        aria-label={`Open actions for ${location.name}`}
+                        className="grid size-9 place-items-center rounded-lg border border-slate-300 bg-white text-lg font-bold leading-none text-[#0c4a6e] shadow-sm transition-colors hover:border-[#0c4a6e] hover:bg-sky-50"
+                        type="button"
+                        onClick={() =>
+                          setOpenActionSlug((currentSlug) =>
+                            currentSlug === location.slug ? null : location.slug
+                          )
+                        }
+                      >
+                        ⋮
+                      </button>
+                      {openActionSlug === location.slug && (
+                        <div className="absolute right-0 top-11 z-20 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 text-sm shadow-xl">
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-slate-700 hover:bg-slate-50"
+                            type="button"
+                            onClick={() => handleEditBusiness(location)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-[#f97316] hover:bg-orange-50"
+                            type="button"
+                            onClick={() => handleToggleStatus(location.slug)}
+                          >
+                            {location.status === "Active" ? "Unpublish" : "Publish"}
+                          </button>
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-red-600 hover:bg-red-50"
+                            type="button"
+                            onClick={() => handleDeleteBusiness(location.slug)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid gap-3 text-sm">
+                    <div>
+                      <span className="block text-xs font-medium text-slate-500">Address</span>
+                      <p className="mt-0.5 text-slate-900">{location.address}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="rounded-xl bg-slate-50 p-3">
+                        <span className="block text-xs text-slate-500">Category</span>
+                        <strong className="text-[#f97316]">{location.category}</strong>
+                      </div>
+                      <div className="rounded-xl bg-slate-50 p-3">
+                        <span className="block text-xs text-slate-500">Radius</span>
+                        <strong className="text-slate-900">{location.radius}</strong>
+                      </div>
+                    </div>
+                    <div className="rounded-xl bg-slate-50 p-3">
+                      <span className="block text-xs text-slate-500">Contact</span>
+                      <p className="mt-0.5 text-slate-900">{location.phone}</p>
+                      <p className="break-all text-xs text-slate-500">{location.email}</p>
+                    </div>
+                    <span
+                      className={
+                        location.status === "Active"
+                          ? "w-fit rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-[#16a34a]"
+                          : "w-fit rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600"
+                      }
+                    >
+                      {location.status}
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-4 hidden overflow-visible rounded-lg border border-slate-200 lg:block">
               <div className="grid h-[55px] grid-cols-[minmax(220px,1.4fr)_minmax(170px,1fr)_140px_100px_189px_110px_90px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
                 {["Location name", "Location", "Category", "Radius", "Contact", "Status", "Actions"].map(
                   (heading) => (

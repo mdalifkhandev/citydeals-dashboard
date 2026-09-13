@@ -150,25 +150,25 @@ export default function LegalPagesPage() {
   }
 
   return (
-    <div className="w-full px-8 py-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-5">
-        <div className="flex items-center justify-between gap-4">
-          <div>
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="min-w-0">
             <h1 className="text-2xl font-semibold text-slate-900">Legal Pages</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm leading-5 text-slate-500">
               Manage mobile app Terms of Use, Privacy Policy and coupon rules dynamically.
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:shrink-0">
             <button
-              className="h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium whitespace-nowrap text-slate-700 hover:bg-slate-50 sm:w-auto sm:min-w-24"
               type="button"
               onClick={handleAddPage}
             >
               Add Page
             </button>
             <button
-              className="h-11 rounded-xl bg-[#f97316] px-4 text-sm font-medium text-white hover:opacity-95"
+              className="h-11 w-full rounded-xl bg-[#f97316] px-4 text-sm font-medium whitespace-nowrap text-white hover:opacity-95 sm:w-auto sm:min-w-28"
               type="button"
               onClick={handleSave}
             >
@@ -177,7 +177,7 @@ export default function LegalPagesPage() {
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-[320px_minmax(0,1fr)] gap-5">
+        <div className="mt-5 grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[320px_minmax(0,1fr)]">
           <div className="overflow-hidden rounded-xl border border-slate-200">
             {pages.map((page) => {
               const active = page.id === selectedId;
@@ -193,7 +193,7 @@ export default function LegalPagesPage() {
                   type="button"
                   onClick={() => loadPage(page)}
                 >
-                  <span className="min-w-0">
+                  <span className="min-w-0 pr-2">
                     <strong className="block truncate text-slate-900">{page.title}</strong>
                     <small className="block truncate text-slate-500">
                       {page.slug} · v{page.version}
@@ -214,12 +214,12 @@ export default function LegalPagesPage() {
             })}
           </div>
 
-          <div className="rounded-xl border border-slate-200 p-4">
+          <div className="min-w-0 rounded-xl border border-slate-200 p-3 sm:p-4">
             <div className="grid gap-3 md:grid-cols-2">
               <label className="grid gap-1 text-sm">
                 <span className="font-medium text-slate-900">Title</span>
                 <input
-                  className="h-10 rounded-lg border border-slate-200 px-3 outline-none focus:border-orange-400"
+                  className="h-10 min-w-0 rounded-lg border border-slate-200 px-3 outline-none focus:border-orange-400"
                   value={title}
                   onChange={(event) => handleTitleChange(event.target.value)}
                 />
@@ -228,7 +228,7 @@ export default function LegalPagesPage() {
               <label className="grid gap-1 text-sm">
                 <span className="font-medium text-slate-900">Slug</span>
                 <input
-                  className="h-10 rounded-lg border border-slate-200 px-3 outline-none focus:border-orange-400"
+                  className="h-10 min-w-0 rounded-lg border border-slate-200 px-3 outline-none focus:border-orange-400"
                   value={slug}
                   onChange={(event) => setSlug(event.target.value)}
                 />
@@ -237,7 +237,7 @@ export default function LegalPagesPage() {
               <label className="grid gap-1 text-sm">
                 <span className="font-medium text-slate-900">Version</span>
                 <input
-                  className="h-10 rounded-lg border border-slate-200 px-3 outline-none focus:border-orange-400"
+                  className="h-10 min-w-0 rounded-lg border border-slate-200 px-3 outline-none focus:border-orange-400"
                   value={version}
                   onChange={(event) => setVersion(event.target.value)}
                 />
@@ -246,7 +246,7 @@ export default function LegalPagesPage() {
               <label className="grid gap-1 text-sm">
                 <span className="font-medium text-slate-900">Status</span>
                 <select
-                  className="h-10 rounded-lg border border-slate-200 px-3 outline-none focus:border-orange-400"
+                  className="h-10 min-w-0 rounded-lg border border-slate-200 bg-white px-3 outline-none focus:border-orange-400"
                   value={status}
                   onChange={(event) => setStatus(event.target.value as LegalPageStatus)}
                 >
@@ -259,13 +259,13 @@ export default function LegalPagesPage() {
             <label className="mt-3 grid gap-1 text-sm">
               <span className="font-medium text-slate-900">Content</span>
               <textarea
-                className="min-h-72 resize-y rounded-lg border border-slate-200 px-3 py-2 outline-none focus:border-orange-400"
+                className="min-h-56 resize-y rounded-lg border border-slate-200 px-3 py-2 outline-none focus:border-orange-400 sm:min-h-72"
                 value={content}
                 onChange={(event) => setContent(event.target.value)}
               />
             </label>
 
-            <div className="mt-4 flex gap-2">
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <button
                 className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
                 type="button"

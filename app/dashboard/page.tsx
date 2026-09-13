@@ -18,9 +18,9 @@ const trendingCoupons = ["Weekend BOGO", "Free Delivery", "20% Off Dinner", "Caf
 
 export default function Dashboard() {
   return (
-    <div className="w-full px-8 pb-[79px] pt-[18px]">
+    <div className="w-full px-4 pb-10 pt-4 sm:px-6 lg:px-8 lg:pb-[79px] lg:pt-[18px]">
           <section
-            className="grid grid-cols-[repeat(5,minmax(160px,1fr))] gap-4"
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5"
             aria-label="Dashboard stats"
           >
             {stats.map((stat) => (
@@ -43,7 +43,7 @@ export default function Dashboard() {
           </section>
 
           <section
-            className="mt-4 min-h-[372px] rounded-2xl border border-[#d8d3c5] bg-white px-6 pb-[18px] pt-5"
+            className="mt-4 min-h-[372px] rounded-2xl border border-[#d8d3c5] bg-white px-4 pb-[18px] pt-5 sm:px-6"
             aria-labelledby="daily-title"
           >
             <h1 className="m-0 text-xl font-medium leading-7 text-slate-900" id="daily-title">
@@ -94,8 +94,8 @@ export default function Dashboard() {
             </div>
           </section>
 
-          <section className="mt-4 grid grid-cols-2 gap-6">
-            <article className="min-h-[356px] rounded-2xl border border-[#d8d3c5] bg-white px-6 py-5">
+          <section className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <article className="min-h-[356px] rounded-2xl border border-[#d8d3c5] bg-white px-4 py-5 sm:px-6">
               <h2 className="m-0 text-xl font-medium leading-7 text-slate-900">Redemptions by Area</h2>
               <p className="mt-0.5 text-sm leading-5 text-slate-500">Monthly coupon redemption count</p>
               <div className="mt-[22px] grid h-[254px] grid-cols-9 items-end gap-4 border-b border-[#eef3f8] pt-4">
@@ -114,7 +114,7 @@ export default function Dashboard() {
               </div>
             </article>
 
-            <article className="min-h-[356px] rounded-2xl border border-[#d8d3c5] bg-white px-6 py-5">
+            <article className="min-h-[356px] rounded-2xl border border-[#d8d3c5] bg-white px-4 py-5 sm:px-6">
               <h2 className="m-0 text-xl font-medium leading-7 text-slate-900">Trending Coupons</h2>
               <p className="mt-0.5 text-sm leading-5 text-slate-500">Top saved and redeemed coupons</p>
               <div className="mt-[18px] grid gap-[15px]">

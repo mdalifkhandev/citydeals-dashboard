@@ -6,7 +6,7 @@ const qrCodes = [
 
 export default function QrCodesPage() {
   return (
-    <div className="w-full px-8 py-6">
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-5">
         <div className="flex items-center justify-between">
           <div>
@@ -15,7 +15,7 @@ export default function QrCodesPage() {
           </div>
           <button className="h-11 rounded-xl bg-[#f97316] px-4 text-sm font-medium text-white">Regenerate selected</button>
         </div>
-        <div className="mt-5 grid grid-cols-3 gap-4">
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {qrCodes.map(([area, link, status, note]) => (
             <article className="rounded-2xl border border-slate-200 bg-slate-50 p-4" key={area}>
               <div className="grid h-40 place-items-center rounded-xl border border-dashed border-slate-300 bg-white text-sm text-slate-500">QR preview</div>

@@ -98,14 +98,14 @@ export default function RolesAndPermissionsPage() {
   };
 
   return (
-    <div className="w-full px-8 py-6">
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
       {/* Main Container Card */}
-      <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-6 shadow-sm">
+      <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-4 shadow-sm sm:p-6">
         {/* Header with Title, Description, and Save Button */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
             <h1 className="text-xl font-semibold text-[#141a21]">Roles & permissions</h1>
-            <p className="mt-1 text-sm text-[#64748b]">
+            <p className="mt-1 text-sm leading-5 text-[#64748b]">
               Super administrators always have full access. Everything below controls what your other
               roles can do.
             </p>
@@ -114,14 +114,69 @@ export default function RolesAndPermissionsPage() {
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-[#f97316] px-8 text-sm font-medium text-white shadow-sm transition-all hover:bg-[#ea580c] active:scale-95 disabled:opacity-70 cursor-pointer"
+            className="inline-flex h-11 w-full shrink-0 cursor-pointer items-center justify-center rounded-xl bg-[#f97316] px-8 text-sm font-medium text-white shadow-sm transition-all hover:bg-[#ea580c] active:scale-95 disabled:opacity-70 sm:w-auto"
           >
             {isSaving ? "Saving..." : "Save"}
           </button>
         </div>
 
+        <div className="mt-6 grid gap-3 lg:hidden">
+          {permissionList.map((item) => (
+            <article
+              className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+              key={item.id}
+            >
+              <div>
+                <h2 className="text-sm font-medium leading-5 text-slate-900">{item.name}</h2>
+                <p className="mt-0.5 text-xs leading-4 text-slate-400">{item.category}</p>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {roles.map((role) => {
+                  const isChecked = !!matrix[item.id]?.[role.key];
+
+                  return (
+                    <button
+                      aria-pressed={isChecked}
+                      className={
+                        isChecked
+                          ? "flex h-10 items-center justify-center gap-2 rounded-xl border border-[#10b981] bg-emerald-50 px-2 text-xs font-medium text-emerald-700"
+                          : "flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-2 text-xs font-medium text-slate-600 hover:border-orange-200 hover:bg-orange-50"
+                      }
+                      key={role.key}
+                      type="button"
+                      onClick={() => togglePermission(item.id, role.key)}
+                    >
+                      <span
+                        className={
+                          isChecked
+                            ? "grid size-4 place-items-center rounded border border-[#10b981] bg-[#10b981] text-white"
+                            : "size-4 rounded border border-slate-300 bg-white"
+                        }
+                      >
+                        {isChecked && (
+                          <svg
+                            className="size-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={3}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </span>
+                      {role.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </article>
+          ))}
+        </div>
+
         {/* Permissions Table Matrix */}
-        <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200">
+        <div className="mt-6 hidden overflow-x-auto rounded-xl border border-slate-200 lg:block">
           <div className="min-w-[850px]">
             {/* Table Header */}
             <div className="grid grid-cols-[minmax(280px,2fr)_repeat(4,minmax(130px,1fr))] items-center bg-[#f8fafc] text-sm font-medium text-slate-600">

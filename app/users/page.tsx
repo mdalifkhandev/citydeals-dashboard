@@ -151,11 +151,11 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="w-full px-8 py-6">
-      <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-3">
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+      <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-3 sm:p-4">
         {/* Header Title */}
         <div className="px-1 py-1">
-          <h1 className="m-0 text-base font-normal leading-6 text-slate-900">
+          <h1 className="m-0 text-2xl font-normal leading-8 text-slate-900 sm:text-base sm:leading-6">
             Registered app users
           </h1>
           <p className="mt-1 text-sm leading-5 text-[#475569]">
@@ -163,8 +163,128 @@ export default function UsersPage() {
           </p>
         </div>
 
+        <div className="mt-4 grid gap-3 lg:hidden">
+          {users.map((user) => (
+            <article
+              className="relative rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+              key={user.id}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3">
+                    <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#0c4a6e] text-sm font-semibold text-white">
+                      {user.name[0]}
+                    </div>
+                    <div className="min-w-0">
+                      <strong className="block truncate text-sm font-medium leading-5 text-slate-900">
+                        {user.name}
+                      </strong>
+                      <small className="block truncate text-xs leading-4 text-[#475569]">
+                        {user.email}
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative shrink-0">
+                  <button
+                    type="button"
+                    aria-label="User actions"
+                    onClick={() =>
+                      setActiveMenuId(activeMenuId === user.id ? null : user.id)
+                    }
+                    className="grid size-9 place-items-center rounded-lg border border-slate-300 bg-white text-lg font-bold leading-none text-[#0c4a6e] shadow-sm hover:border-[#0c4a6e] hover:bg-sky-50"
+                  >
+                    ⋮
+                  </button>
+
+                  {activeMenuId === user.id && (
+                    <div className="absolute right-0 top-10 z-30 w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenDetails(user)}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50"
+                      >
+                        View Details
+                      </button>
+
+                      {user.status === "Active" ? (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleStatus(user.id, "Suspended")}
+                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium text-amber-600 hover:bg-amber-50"
+                        >
+                          Suspend User
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleStatus(user.id, "Active")}
+                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium text-emerald-600 hover:bg-emerald-50"
+                        >
+                          Activate User
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleToggleStatus(user.id, "Banned")}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium text-rose-600 hover:bg-rose-50"
+                      >
+                        Ban Account
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-3 grid gap-2 rounded-lg bg-slate-50 p-3 text-sm">
+                <div className="flex justify-between gap-3">
+                  <span className="text-slate-500">Phone</span>
+                  <strong className="text-right font-medium text-slate-900">{user.phone}</strong>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <span className="text-slate-500">Joined</span>
+                  <strong className="text-right font-medium text-slate-900">{user.joined}</strong>
+                </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-lg border border-slate-200 bg-white p-2">
+                  <span className="block text-[10px] font-medium uppercase text-slate-400">
+                    Saved
+                  </span>
+                  <strong className="text-sm text-slate-900">{user.saved}</strong>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-white p-2">
+                  <span className="block text-[10px] font-medium uppercase text-slate-400">
+                    Redeemed
+                  </span>
+                  <strong className="text-sm text-slate-900">{user.redeemed}</strong>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-white p-2">
+                  <span className="block text-[10px] font-medium uppercase text-slate-400">
+                    Status
+                  </span>
+                  <span
+                    className={`mt-1 inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${
+                      user.status === "Active"
+                        ? "bg-emerald-100 text-[#16a34a]"
+                        : user.status === "Suspended"
+                          ? "bg-amber-100 text-amber-700"
+                          : "bg-rose-100 text-rose-700"
+                    }`}
+                  >
+                    {user.status}
+                  </span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
         {/* Table Container */}
-        <div className="mt-4 overflow-x-auto rounded-lg border border-slate-200">
+        <div className="mt-4 hidden overflow-x-auto rounded-lg border border-slate-200 lg:block">
           <div className="min-w-[880px]">
             {/* Table Header */}
             <div className="grid h-[55px] grid-cols-[minmax(180px,1.2fr)_minmax(200px,1.3fr)_140px_100px_140px_110px_70px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
@@ -358,7 +478,7 @@ export default function UsersPage() {
             </div>
 
             {/* Stats Overview */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="rounded-2xl border border-slate-200 p-3.5 text-center">
                 <span className="text-xs text-[#475569]">Saved Coupons</span>
                 <strong className="mt-1 block text-2xl font-semibold text-slate-900">
