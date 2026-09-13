@@ -122,15 +122,15 @@ export default function AreasPage() {
   };
 
   return (
-    <div className="w-full px-8 py-6">
-      <section className="rounded-2xl border border-slate-200 bg-white p-5">
-        <div className="flex items-center justify-between gap-4">
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-slate-900">Areas / Directories</h1>
             <p className="mt-1 text-sm text-slate-500">Manage isolated city directories, app landing links and area QR destinations.</p>
           </div>
           <button
-            className="h-11 rounded-xl bg-[#f97316] px-4 text-sm font-medium text-white transition-opacity hover:opacity-95"
+            className="h-11 w-full rounded-xl bg-[#f97316] px-4 text-sm font-medium text-white transition-opacity hover:opacity-95 sm:w-auto"
             type="button"
             onClick={() => {
               setEditingAreaSlug(null);
@@ -145,7 +145,7 @@ export default function AreasPage() {
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-4">
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {[`Total areas: ${areaList.length}`, "Active directories: 2", "QR codes ready: 2"].map((item) => (
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4" key={item}>
               <p className="text-sm font-medium text-slate-700">{item}</p>
@@ -153,7 +153,84 @@ export default function AreasPage() {
           ))}
         </div>
 
-        <div className="mt-5 overflow-x-auto overflow-y-visible rounded-xl border border-slate-200">
+        <div className="mt-5 grid gap-3 md:hidden">
+          {areaList.map((area) => (
+            <article className="rounded-2xl border border-slate-200 bg-white p-4" key={area.slug}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 className="truncate text-base font-semibold text-slate-900">{area.name}</h2>
+                  <p className="mt-1 text-sm text-slate-500">{area.city}, {area.state}</p>
+                  <p className="mt-1 break-all text-xs text-slate-500">/directory/{area.slug}</p>
+                </div>
+                <div className="relative shrink-0">
+                  <button
+                    aria-expanded={openActionSlug === area.slug}
+                    aria-label={`Open actions for ${area.name}`}
+                    className="grid size-9 place-items-center rounded-lg border border-slate-300 bg-white text-lg font-bold leading-none text-[#0c4a6e] shadow-sm transition-colors hover:border-[#0c4a6e] hover:bg-sky-50"
+                    type="button"
+                    onClick={() =>
+                      setOpenActionSlug((currentSlug) =>
+                        currentSlug === area.slug ? null : area.slug
+                      )
+                    }
+                  >
+                    ⋮
+                  </button>
+                  {openActionSlug === area.slug && (
+                    <div className="absolute right-0 top-11 z-20 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 text-sm shadow-xl">
+                      <button
+                        className="block w-full px-3.5 py-2 text-left text-slate-700 hover:bg-slate-50"
+                        type="button"
+                        onClick={() => handleEditArea(area)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="block w-full px-3.5 py-2 text-left text-[#f97316] hover:bg-orange-50"
+                        type="button"
+                        onClick={() => handleToggleAreaStatus(area.slug)}
+                      >
+                        {area.qr === "Ready" ? "Unpublish" : "Publish"}
+                      </button>
+                      <button
+                        className="block w-full px-3.5 py-2 text-left text-red-600 hover:bg-red-50"
+                        type="button"
+                        onClick={() => handleDeleteArea(area.slug)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <span className="block text-xs text-slate-500">Merchants</span>
+                  <strong className="text-slate-900">{area.merchants}</strong>
+                </div>
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <span className="block text-xs text-slate-500">Coupons</span>
+                  <strong className="text-slate-900">{area.coupons}</strong>
+                </div>
+                <div className="rounded-xl bg-slate-50 p-3">
+                  <span className="block text-xs text-slate-500">QR</span>
+                  <strong
+                    className={
+                      area.qr === "Ready"
+                        ? "text-xs font-semibold text-emerald-700"
+                        : "text-xs font-semibold text-slate-600"
+                    }
+                  >
+                    {area.qr}
+                  </strong>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-5 hidden overflow-x-auto overflow-y-visible rounded-xl border border-slate-200 md:block">
           <div className="grid grid-cols-[1.2fr_1fr_120px_120px_120px_90px] bg-slate-100 text-sm text-[#315576]">
             {["Area", "Directory URL", "Merchants", "Coupons", "QR", "Actions"].map((h) => <div className="border-r border-slate-300 px-4 py-3 last:border-r-0" key={h}>{h}</div>)}
           </div>
@@ -253,7 +330,7 @@ export default function AreasPage() {
                 />
               </label>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="grid gap-1">
                   <span className="text-sm leading-5 text-slate-900">City</span>
                   <input
