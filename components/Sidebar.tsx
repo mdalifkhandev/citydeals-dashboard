@@ -51,9 +51,11 @@ const menuSections = [
 
 type SidebarProps = {
   activeItem?: string;
+  onNavigate?: () => void;
+  className?: string;
 };
 
-export default function Sidebar({ activeItem }: SidebarProps) {
+export default function Sidebar({ activeItem, onNavigate, className = "" }: SidebarProps) {
   const pathname = usePathname();
 
   const isItemActive = (item: { label: string; href: string }) => {
@@ -64,7 +66,7 @@ export default function Sidebar({ activeItem }: SidebarProps) {
   };
 
   return (
-    <aside className="sticky top-0 flex h-svh flex-col overflow-y-auto rounded-br-2xl border-r border-[#eef3f8] bg-white shadow-[0_1px_2px_-1px_rgba(12,74,110,0.16)]">
+    <aside className={`flex h-svh flex-col overflow-y-auto border-r border-[#eef3f8] bg-white shadow-[0_1px_2px_-1px_rgba(12,74,110,0.16)] lg:sticky lg:top-0 lg:rounded-br-2xl ${className}`}>
       <div className="flex min-h-[74px] items-center justify-center border-b border-[#eef3f8]">
         <Image
           src={`${assetBase}imgD69B5048473640DcAe8C611Eb64B3D721Vectorized.svg`}
@@ -94,6 +96,7 @@ export default function Sidebar({ activeItem }: SidebarProps) {
                     }
                     href={item.href}
                     key={item.label}
+                    onClick={onNavigate}
                   >
                     <Image src={`${assetBase}${item.icon}`} alt="" width={20} height={20} />
                     <span>{item.label}</span>
@@ -109,6 +112,7 @@ export default function Sidebar({ activeItem }: SidebarProps) {
         <Link
           className="flex min-h-14 items-center gap-3 rounded-lg p-2 text-[#475569] no-underline hover:bg-slate-50"
           href="/"
+          onClick={onNavigate}
         >
           <span className="grid size-10 place-items-center rounded-lg bg-slate-50">
             <Image src={`${assetBase}imgVuesaxLinearLogout.svg`} alt="" width={20} height={20} />

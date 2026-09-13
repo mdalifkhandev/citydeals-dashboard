@@ -96,20 +96,39 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="w-full px-8 py-6">
-          <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-3">
-            <div className="flex h-12 items-center justify-between gap-5">
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
+          <style jsx>{`
+            .categories-mobile-list {
+              display: grid;
+            }
+
+            .categories-desktop-table {
+              display: none;
+            }
+
+            @media (min-width: 1024px) {
+              .categories-mobile-list {
+                display: none;
+              }
+
+              .categories-desktop-table {
+                display: block;
+              }
+            }
+          `}</style>
+          <section className="w-full rounded-2xl border border-[#d1d5db] bg-white p-3 sm:p-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <h1 className="m-0 text-base font-normal leading-6 text-slate-900">
+                <h1 className="m-0 text-2xl font-normal leading-8 text-slate-900 sm:text-base sm:leading-6">
                   Coupon categories
                 </h1>
-                <p className="mt-1 truncate text-sm leading-5 text-[#475569]">
+                <p className="mt-1 line-clamp-2 text-sm leading-5 text-[#475569] sm:truncate">
                   Categories drive how shoppers filter offers. Keep the list short, clear and
                   consistent across every city.
                 </p>
               </div>
               <button
-                className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#f97316] px-3 py-3 text-base leading-6 text-white"
+                className="flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[#f97316] px-3 py-3 text-base leading-6 text-white sm:w-auto"
                 type="button"
                 onClick={() => setIsDrawerOpen(true)}
               >
@@ -118,7 +137,94 @@ export default function CategoriesPage() {
               </button>
             </div>
 
-            <div className="mt-4 overflow-x-auto overflow-y-visible rounded-lg border border-slate-200">
+            <div className="categories-mobile-list mt-4 gap-3">
+              {categoryList.map((category) => (
+                <article
+                  className="relative rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                  key={category.slug}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="relative size-10 shrink-0 overflow-hidden rounded">
+                        <Image
+                          className="scale-150 object-cover"
+                          src={`${assetBase}imgLocationAvatar.png`}
+                          alt=""
+                          fill
+                          sizes="40px"
+                        />
+                      </span>
+                      <span className="min-w-0">
+                        <strong className="block truncate text-sm font-medium leading-5 text-slate-900">
+                          {category.name}
+                        </strong>
+                        <small className="block truncate text-xs leading-4 text-[#475569]">
+                          {category.slug}
+                        </small>
+                      </span>
+                    </div>
+                    <div className="relative shrink-0">
+                      <button
+                        aria-expanded={openActionSlug === category.slug}
+                        aria-label={`Open actions for ${category.name}`}
+                        className="grid size-9 place-items-center rounded-lg border border-slate-300 bg-white text-lg font-bold leading-none text-[#0c4a6e] shadow-sm transition-colors hover:border-[#0c4a6e] hover:bg-sky-50"
+                        type="button"
+                        onClick={() =>
+                          setOpenActionSlug((currentSlug) =>
+                            currentSlug === category.slug ? null : category.slug
+                          )
+                        }
+                      >
+                        ⋮
+                      </button>
+                      {openActionSlug === category.slug && (
+                        <div className="absolute right-0 top-10 z-20 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 text-sm shadow-xl">
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-slate-700 hover:bg-slate-50"
+                            type="button"
+                            onClick={() => handleEditCategory(category)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-[#f97316] hover:bg-orange-50"
+                            type="button"
+                            onClick={() => handleToggleStatus(category.slug)}
+                          >
+                            {category.status === "Active" ? "Unpublish" : "Publish"}
+                          </button>
+                          <button
+                            className="block w-full px-3.5 py-2 text-left text-red-600 hover:bg-red-50"
+                            type="button"
+                            onClick={() => handleDeleteCategory(category.slug)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="mt-3 text-sm leading-5 text-slate-700">{category.description}</p>
+                  <div className="mt-3 flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+                    <span className="text-xs font-medium uppercase tracking-wide text-slate-400">
+                      Status
+                    </span>
+                    <span
+                      className={
+                        category.status === "Active"
+                          ? "inline-flex h-6 items-center rounded bg-emerald-100 px-2 text-sm leading-5 text-[#16a34a]"
+                          : "inline-flex h-6 items-center rounded bg-slate-100 px-2 text-sm leading-5 text-slate-600"
+                      }
+                    >
+                      {category.status}
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="categories-desktop-table mt-4 overflow-x-auto overflow-y-visible rounded-lg border border-slate-200">
               <div className="min-w-[760px]">
                 <div className="grid h-[55px] grid-cols-[minmax(220px,1.1fr)_minmax(260px,1.8fr)_110px_90px] items-center bg-slate-100 text-sm leading-5 text-[#315576]">
                   {["Name", "Description", "Status", "Actions"].map((heading) => (

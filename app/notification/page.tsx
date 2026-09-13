@@ -49,7 +49,7 @@ export default function SendNotificationPage() {
   }
 
   return (
-    <div className="w-full px-8 py-6">
+    <div className="w-full px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
       <section className="w-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="border-b border-slate-100 pb-4">
           <h1 className="text-2xl font-semibold leading-8 text-slate-900">
