@@ -61,8 +61,8 @@ export default function Home() {
         if (user?.role !== "ADMIN") {
           throw new Error("Access denied. Only Admins can access the dashboard.");
         }
-        
         localStorage.setItem("dashboard_access_token", tokens.accessToken);
+        localStorage.setItem("dashboard_refresh_token", tokens.refreshToken);
         localStorage.setItem("dashboard_user", JSON.stringify(user));
         
         router.push("/dashboard");

@@ -82,7 +82,7 @@ apiClient.interceptors.response.use(
         if (typeof window !== 'undefined') {
           localStorage.removeItem('dashboard_access_token');
           localStorage.removeItem('dashboard_refresh_token');
-          window.location.href = '/login';
+          window.location.href = '/';
         }
         return Promise.reject(err);
       } finally {
